@@ -1,0 +1,32 @@
+version: "3"
+services:
+  mongodb:
+    image: "mongo"
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: metal
+      MONGO_INITDB_ROOT_PASSWORD: souls
+
+  backend:
+    build: .
+    container_name: backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    environment:
+      MONGO_URI: "mongodb://metal:souls@mongodb:27017/metalsoulsdb?authSource=admin"
+    env_file:
+    - .env 
+    volumes:
+      - .:/usr/src/app
+    working_dir: /usr/src/app
+    command: ["npm", "start"]
+
+volumes:
+  mongo-data:
+    driver: local
