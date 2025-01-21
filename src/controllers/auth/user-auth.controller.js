@@ -3,7 +3,7 @@ import User from '../../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import { generateAccessToken } from '../../services/jwt.js';
 
-export const registerController = async (req, res) => {
+export const registerControllerUser = async (req, res) => {
   const { email, password, username } = req.body;
   try {
     const userFound = await User.findOne({ email });
