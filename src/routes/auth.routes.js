@@ -1,5 +1,5 @@
 import { Router } from 'express';
-// import { validateSchema } from '../middleware/validator-middleware';
+// import { validateSchema } from '../middleware/validator.middleware.js';
 // import { loginSchema } from '../schemas/auth/login-auth-schema.js';
 const router = Router();
 
