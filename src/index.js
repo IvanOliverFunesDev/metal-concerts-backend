@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000; // 👈 Asegurar que PORT se carga bien
 // Middleware básico
 app.use(express.json());
 
-app.get('/', (req, res) => {
+app.get('/home', (req, res) => {
   res.send(`Servidor funcionando en el puerto ${PORT} 🚀`);
 });
 
