@@ -9,7 +9,7 @@ import { registerControllerBand } from '../controllers/auth/band-auth.controller
 import { profileUserController } from '../controllers/users/user.controller.js';
 import { authRequired } from '../middleware/validate-token.middleware.js';
 import { profileBandController } from '../controllers/bands/band.controller.js';
-import { checkRole } from '../middleware/checkRole.middleware.js';
+import { checkRole } from '../middleware/check-role.middleware.js';
 
 const router = Router();
 
