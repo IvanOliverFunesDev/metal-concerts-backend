@@ -4,10 +4,12 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
 import authRoutes from '../routes/auth.routes.js';
+import concertRoutes from '../routes/concert.routes.js';
+import userRoutes from '../routes/user.routes.js';
 
 import logger from '../utils/logger.js';
-import { loggerMiddleware } from '../middleware/loggerMiddleware.js';
-import { errorHandlingMiddleware } from '../middleware/errorHandlingMiddleware.js';
+import { loggerMiddleware } from '../middleware/logger.middleware.js';
+import { errorHandlingMiddleware } from '../middleware/error-handling.middleware.js';
 
 export default function (app) {
   app.use(loggerMiddleware);
@@ -20,6 +22,8 @@ export default function (app) {
   app.use(express.json());
 
   app.use('/api/auth', authRoutes);
+  app.use('/api/concerts', concertRoutes);
+  app.use('/api/users', userRoutes);
 
   app.use(errorHandlingMiddleware);
 }
