@@ -1,23 +1,6 @@
 import Concert from '../../models/concerts.model.js';
 import Band from '../../models/band.model.js';
 
-export const createConcertController = async (req, res) => {
-  try {
-    const { title, description, date, location } = req.body;
-    const newConcert = new Concert({
-      title,
-      description,
-      date,
-      location,
-      band: req.user.id
-    });
-    const savedConcert = await newConcert.save();
-    res.status(201).json(savedConcert);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 export const getAllConcertsController = async (req, res) => {
   try {
     const { title, location, date, bandName } = req.query;
@@ -46,6 +29,33 @@ export const getAllConcertsController = async (req, res) => {
 
     const concerts = await Concert.find(filters).populate('band', 'bandName genre');
     res.status(200).json(concerts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createConcertController = async (req, res) => {
+  try {
+    const { title, description, date, location } = req.body;
+    const newConcert = new Concert({
+      title,
+      description,
+      date,
+      location,
+      band: req.user.id
+    });
+    const savedConcert = await newConcert.save();
+    res.status(201).json(savedConcert);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateConcertController = async (req, res) => {
+  try {
+    const updateConcert = await Concert.findOneAndUpdate(req.params.id, req.body);
+    if (!updateConcert) return res.json({ message: 'Concert not found' });
+    res.status(200).json(updateConcert);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
