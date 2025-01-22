@@ -53,7 +53,7 @@ export const createConcertController = async (req, res) => {
 
 export const updateConcertController = async (req, res) => {
   try {
-    const updateConcert = await Concert.findOneAndUpdate(req.params.id, req.body);
+    const updateConcert = await Concert.findByIdAndUpdate(req.params.id, req.body);
     if (!updateConcert) return res.json({ message: 'Concert not found' });
     res.status(200).json(updateConcert);
   } catch (error) {
@@ -63,7 +63,7 @@ export const updateConcertController = async (req, res) => {
 
 export const deleteConcertController = async (req, res) => {
   try {
-    const deleteConcert = await Concert.findOneAndDelete(req.params.id);
+    const deleteConcert = await Concert.findByIdAndDelete(req.params.id);
     if (!deleteConcert) return res.json({ message: 'Concert not found' });
     res.status(200).json({ message: 'Delete concert successfully' });
   } catch (error) {

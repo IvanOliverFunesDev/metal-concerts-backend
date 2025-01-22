@@ -3,7 +3,7 @@ import Band from '../../models/band.model.js';
 import bcrypt from 'bcryptjs';
 import { generateAccessToken } from '../../services/jwt.js';
 
-export const registerControllerBand = async (req, res) => {
+export const registerBandController = async (req, res) => {
   const { email, password, bandName, genre, description } = req.body;
   try {
     const bandFound = await Band.findOne({ email });
