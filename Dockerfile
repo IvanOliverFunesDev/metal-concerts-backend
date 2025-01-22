@@ -8,13 +8,13 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # 4️⃣ Instala las dependencias
-RUN npm install
+RUN npm ci
 
 # 5️⃣ Copia el resto del código al contenedor
 COPY . .
 
 # 6️⃣ Expone el puerto en el que corre el backend (el mismo que en docker-compose)
 EXPOSE 3000
-
+USER 1000
 # 7️⃣ Comando por defecto para ejecutar la aplicación
 CMD ["npm", "start"]
