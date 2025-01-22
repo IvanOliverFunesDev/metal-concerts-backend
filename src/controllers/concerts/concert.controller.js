@@ -60,3 +60,13 @@ export const updateConcertController = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const deleteConcertController = async (req, res) => {
+  try {
+    const deleteConcert = await Concert.findOneAndDelete(req.params.id);
+    if (!deleteConcert) return res.json({ message: 'Concert not found' });
+    res.status(200).json({ message: 'Delete concert successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
