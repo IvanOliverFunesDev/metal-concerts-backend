@@ -10,6 +10,8 @@ import { profileUserController } from '../controllers/users/user.controller.js';
 import { authRequired } from '../middleware/validate-token.middleware.js';
 import { profileBandController } from '../controllers/bands/band.controller.js';
 import { checkRole } from '../middleware/check-role.middleware.js';
+import { createConcertController, deleteConcertController, getAllConcertsController, updateConcertController } from '../controllers/concerts/concert.controller.js';
+import { checkOwnerShip } from '../middleware/check-owner-ship.middleware.js';
 
 const router = Router();
 
@@ -22,5 +24,10 @@ router.post('/register/band', validateSchema(registerBandSchema), registerContro
 router.post('/logout', logoutController);
 router.get('/profile/user', authRequired, checkRole('user'), profileUserController);
 router.get('/profile/band', authRequired, checkRole('band'), profileBandController);
+
+router.get('/concerts', getAllConcertsController);
+router.post('/concerts', authRequired, checkRole('band'), createConcertController);
+router.put('/concerts/id', authRequired, checkRole('band'), checkOwnerShip, updateConcertController);
+router.delete('/concerts/id', authRequired, checkRole('band'), checkOwnerShip, deleteConcertController);
 
 export default router;
