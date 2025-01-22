@@ -35,3 +35,17 @@ export const addFavoriteConcert = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const removeFavoriteConcert = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.favoriteConcerts = user.favoriteConcerts.filter(concertId => concertId.toString() !== req.params.concertId);
+    await user.save();
+
+    res.status(200).json({ message: 'Concert removed from favorites', favoriteConcerts: user.favoriteConcerts });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
