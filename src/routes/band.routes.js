@@ -1,6 +1,8 @@
 import { Router } from 'express';
+
 import { checkRole } from '../middleware/check-role.middleware.js';
 import { authRequired } from '../middleware/validate-token.middleware.js';
+
 import { getAllBands, getBandPublicProfile, updateBandProfile } from '../controllers/bands/band.controller.js';
 
 const router = Router();

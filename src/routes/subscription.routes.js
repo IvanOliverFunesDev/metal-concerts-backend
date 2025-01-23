@@ -1,7 +1,14 @@
 import { Router } from 'express';
+
 import { authRequired } from '../middleware/validate-token.middleware.js';
 import { checkRole } from '../middleware/check-role.middleware.js';
-import { subscribeToBand, unsubscribeFromBand, getUserSubscriptions, getBandSubscribers } from '../controllers/subscription.controller.js';
+
+import {
+  subscribeToBand,
+  unsubscribeFromBand,
+  getUserSubscriptions,
+  getBandSubscribers
+} from '../controllers/subscription.controller.js';
 
 const router = Router();
 router.post('/subscribe/:bandId', authRequired, checkRole('user'), subscribeToBand);
