@@ -3,34 +3,53 @@ import Band from '../../models/band.model.js';
 
 export const getAllConcertsController = async (req, res) => {
   try {
-    const { title, location, date, bandName } = req.query;
+    const { title, location, date, bandName, genre } = req.query;
     const filters = {};
 
     if (title) {
-      filters.title = { $regex: title, $options: 'i' };
+      const cleanTitle = title.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      filters.title = { $regex: `.*${cleanTitle}.*`, $options: 'i' };
     }
 
     if (location) {
-      filters.location = { $regex: location, $options: 'i' };
+      const cleanLocation = location.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      filters.location = { $regex: `.*${cleanLocation}.*`, $options: 'i' };
     }
 
     if (date) {
       filters.date = new Date(date);
     }
 
+    let bandIds = [];
     if (bandName) {
       const cleanBandName = bandName.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-
-      const bands = await Band.find({ bandName: { $regex: `^${cleanBandName}$`, $options: 'i' } });
+      const bands = await Band.find({ bandName: { $regex: `.*${cleanBandName}.*`, $options: 'i' } });
 
       if (bands.length > 0) {
-        filters.band = { $in: bands.map(band => band._id) };
+        bandIds = bands.map(band => band._id);
       } else {
         return res.status(404).json({ message: 'Band not found' });
       }
     }
 
-    const concerts = await Concert.find(filters).populate('band', 'bandName genre');
+    if (genre) {
+      const cleanGenre = genre.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const bandsByGenre = await Band.find({ genre: { $regex: `.*${cleanGenre}.*`, $options: 'i' } });
+
+      if (bandsByGenre.length > 0) {
+        const genreBandIds = bandsByGenre.map(band => band._id);
+        bandIds = [...new Set([...bandIds, ...genreBandIds])];
+      } else {
+        return res.status(404).json({ message: 'No bands found for this genre' });
+      }
+    }
+
+    if (bandIds.length > 0) {
+      filters.band = { $in: bandIds };
+    }
+
+    const concerts = await Concert.find(filters).populate('band', 'bandName genre image');
+
     res.status(200).json(concerts);
   } catch (error) {
     res.status(500).json({ message: error.message });

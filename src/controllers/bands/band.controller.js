@@ -49,7 +49,18 @@ export const getBandPublicProfile = async (req, res) => {
 
 export const getAllBands = async (req, res) => {
   try {
-    const bands = await Band.find().select('bandName genre description image subscribers');
+    const { bandName, genre } = req.query;
+    const filters = {};
+
+    if (bandName) {
+      filters.bandName = { $regex: `.*${bandName}.*`, $options: 'i' };
+    }
+
+    if (genre) {
+      filters.genre = { $regex: `.*${genre}.*`, $options: 'i' };
+    }
+
+    const bands = await Band.find(filters).select('bandName genre description image subscribers');
 
     const formattedBands = bands.map(band => ({
       id: band._id,
