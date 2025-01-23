@@ -7,6 +7,7 @@ import authRoutes from '../routes/auth.routes.js';
 import concertRoutes from '../routes/concert.routes.js';
 import userRoutes from '../routes/user.routes.js';
 import subscriptionRoutes from '../routes/subscription.routes.js';
+import bandRoutes from '../routes/band.routes.js';
 
 import logger from '../utils/logger.js';
 import { loggerMiddleware } from '../middleware/logger.middleware.js';
@@ -26,6 +27,7 @@ export default function (app) {
   app.use('/api/concerts', concertRoutes);
   app.use('/api/users', userRoutes);
   app.use('/api/subscriptions', subscriptionRoutes);
+  app.use('/api/bands', bandRoutes);
 
   app.use(errorHandlingMiddleware);
 }
