@@ -6,10 +6,9 @@ import { authRequired } from '../middleware/validate-token.middleware.js';
 
 const router = Router();
 
-router.get('/', getAllConcertsController);
-
 router.post('/', authRequired, checkRole('band'), createConcertController);
-router.put('/:id', authRequired, checkRole('band'), checkOwnerShip, updateConcertController);
 router.delete('/:id', authRequired, checkRole('band'), checkOwnerShip, deleteConcertController);
+router.get('/', getAllConcertsController);
+router.put('/:id', authRequired, checkRole('band'), checkOwnerShip, updateConcertController);
 
 export default router;
