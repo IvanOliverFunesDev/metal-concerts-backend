@@ -19,9 +19,12 @@ export const getAllConcertsController = async (req, res) => {
     }
 
     if (bandName) {
-      const band = await Band.findOne({ bandName: { $regex: bandName, $options: 'i' } });
-      if (band) {
-        filters.band = band._id;
+      const cleanBandName = bandName.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+      const bands = await Band.find({ bandName: { $regex: `^${cleanBandName}$`, $options: 'i' } });
+
+      if (bands.length > 0) {
+        filters.band = { $in: bands.map(band => band._id) };
       } else {
         return res.status(404).json({ message: 'Band not found' });
       }
