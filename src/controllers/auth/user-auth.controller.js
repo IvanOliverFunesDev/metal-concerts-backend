@@ -2,6 +2,7 @@
 import User from '../../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import { generateAccessToken } from '../../services/jwt.js';
+import { successResponse, errorResponse } from '../../utils/responseHelper.js';
 
 export const registerUserController = async (req, res) => {
   const { email, password, username } = req.body;
@@ -20,7 +21,7 @@ export const registerUserController = async (req, res) => {
     const token = await generateAccessToken({ id: userSaved._id, role: 'user' });
 
     res.cookie('token', token);
-    res.status(201).json({
+    return successResponse(res, 'You have registered successfully', {
       id: userSaved._id,
       username: userSaved.username,
       email: userSaved.email,
@@ -28,6 +29,6 @@ export const registerUserController = async (req, res) => {
       updatedAt: userSaved.updatedAt
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
