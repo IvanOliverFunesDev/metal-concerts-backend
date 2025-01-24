@@ -3,6 +3,7 @@ import User from '../../models/user.model.js';
 import Band from '../../models/band.model.js';
 import bcrypt from 'bcryptjs';
 import { generateAccessToken } from '../../services/jwt.js';
+import { errorResponse, successResponse } from '../../utils/responseHelper.js';
 
 export const loginController = async (req, res) => {
   const { email, password } = req.body;
@@ -16,7 +17,7 @@ export const loginController = async (req, res) => {
       role = 'band';
     }
     if (!userFound) {
-      return res.status(400).json({ message: 'User or Band not found' });
+      return errorResponse(res, 400, 'User or Band not found');
     }
 
     const isMatch = await bcrypt.compare(password, userFound.password);
@@ -26,7 +27,7 @@ export const loginController = async (req, res) => {
 
     res.cookie('token', token);
 
-    res.json({
+    return successResponse(res, 'login succesfully', {
       id: userFound._id,
       role,
       username: userFound.username || userFound.bandName,
@@ -35,7 +36,7 @@ export const loginController = async (req, res) => {
       updateAt: userFound.updateAt
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
 
@@ -43,5 +44,5 @@ export const logoutController = (req, res) => {
   res.cookie('token', '', {
     expires: new Date(0)
   });
-  return res.status(200).json({ message: 'logout completed' });
+  return successResponse(res, 'logout completed');
 };

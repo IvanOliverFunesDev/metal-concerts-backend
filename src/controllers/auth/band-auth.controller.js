@@ -2,6 +2,7 @@
 import Band from '../../models/band.model.js';
 import bcrypt from 'bcryptjs';
 import { generateAccessToken } from '../../services/jwt.js';
+import { successResponse, errorResponse } from '../../utils/responseHelper.js';
 
 export const registerBandController = async (req, res) => {
   const { email, password, bandName, genre, description } = req.body;
@@ -22,8 +23,7 @@ export const registerBandController = async (req, res) => {
     const token = await generateAccessToken({ id: bandSaved._id, role: 'band' });
 
     res.cookie('token', token);
-
-    res.status(201).json({
+    return successResponse(res, 'You have registered successfully', {
       id: bandSaved._id,
       bandName: bandSaved.bandName,
       email: bandSaved.email,
@@ -33,6 +33,6 @@ export const registerBandController = async (req, res) => {
       updatedAt: bandSaved.updatedAt
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };

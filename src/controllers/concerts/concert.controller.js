@@ -1,5 +1,6 @@
 import Concert from '../../models/concerts.model.js';
 import Band from '../../models/band.model.js';
+import { errorResponse, successResponse } from '../../utils/responseHelper.js';
 
 export const getAllConcertsController = async (req, res) => {
   try {
@@ -21,6 +22,7 @@ export const getAllConcertsController = async (req, res) => {
     }
 
     let bandIds = [];
+
     if (bandName) {
       const cleanBandName = bandName.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       const bands = await Band.find({ bandName: { $regex: `.*${cleanBandName}.*`, $options: 'i' } });
@@ -28,7 +30,7 @@ export const getAllConcertsController = async (req, res) => {
       if (bands.length > 0) {
         bandIds = bands.map(band => band._id);
       } else {
-        return res.status(404).json({ message: 'Band not found' });
+        return errorResponse(res, 404, 'No bands found with the provided name');
       }
     }
 
@@ -40,7 +42,7 @@ export const getAllConcertsController = async (req, res) => {
         const genreBandIds = bandsByGenre.map(band => band._id);
         bandIds = [...new Set([...bandIds, ...genreBandIds])];
       } else {
-        return res.status(404).json({ message: 'No bands found for this genre' });
+        return errorResponse(res, 404, 'No bands found with the provided genre');
       }
     }
 
@@ -50,9 +52,13 @@ export const getAllConcertsController = async (req, res) => {
 
     const concerts = await Concert.find(filters).populate('band', 'bandName genre image');
 
-    res.status(200).json(concerts);
+    if (concerts.length === 0) {
+      return errorResponse(res, 404, 'No concerts found matching the search criteria');
+    }
+
+    return successResponse(res, 'Concerts retrieved successfully', concerts);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
 
@@ -64,12 +70,12 @@ export const getConcertByIdController = async (req, res) => {
     const concert = await Concert.findById(cleanId).populate('band', 'bandName genre image subscribers');
 
     if (!concert) {
-      return res.status(404).json({ message: 'Concert not found' });
+      return errorResponse(res, 404, 'Concert not found');
     }
 
     const subscribersCount = concert.band.subscribers ? concert.band.subscribers.length : 0;
 
-    res.status(200).json({
+    return successResponse(res, 'Concert details retrieved successfully', {
       id: concert._id,
       title: concert.title,
       description: concert.description,
@@ -84,7 +90,7 @@ export const getConcertByIdController = async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
 
@@ -99,9 +105,9 @@ export const createConcertController = async (req, res) => {
       band: req.user.id
     });
     const savedConcert = await newConcert.save();
-    res.status(201).json(savedConcert);
+    return successResponse(res, 'Successfully created concert', savedConcert);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
 
@@ -109,9 +115,9 @@ export const updateConcertController = async (req, res) => {
   try {
     const updateConcert = await Concert.findByIdAndUpdate(req.params.id, req.body);
     if (!updateConcert) return res.json({ message: 'Concert not found' });
-    res.status(200).json(updateConcert);
+    return successResponse(res, 'Successfully updated concert', updateConcert);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
 
@@ -119,9 +125,9 @@ export const deleteConcertController = async (req, res) => {
   try {
     const deleteConcert = await Concert.findByIdAndDelete(req.params.id);
     if (!deleteConcert) return res.json({ message: 'Concert not found' });
-    res.status(200).json({ message: 'Delete concert successfully' });
+    return successResponse(res, 'Concert deleted successfully');
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
 
@@ -134,9 +140,9 @@ export const getUpcomingConcertsController = async (req, res) => {
       .sort({ date: 1 }) // 🔥 Ordenar por fecha ascendente (próximos eventos primero)
       .limit(4); // 🔥 Mostrar solo 4 conciertos
 
-    res.status(200).json(upcomingConcerts);
+    return successResponse(res, 'Concert ', upcomingConcerts);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
 
@@ -146,7 +152,7 @@ export const getHighlightedConcertsController = async (req, res) => {
     const topBands = await Band.find().sort({ subscribers: -1 }).limit(5);
 
     if (!topBands.length) {
-      return res.status(404).json({ message: 'No bands found' });
+      return errorResponse(res, 404, 'No bands found');
     }
 
     // 🔥 Obtener conciertos de esas bandas
@@ -154,11 +160,11 @@ export const getHighlightedConcertsController = async (req, res) => {
       band: { $in: topBands.map(band => band._id) }
     })
       .populate('band', 'bandName genre image subscribers')
-      .sort({ 'band.subscribers': -1 }) // 🔥 Ordenar por popularidad de la banda
-      .limit(4); // 🔥 Solo 4 conciertos
+      .sort({ 'band.subscribers': -1 })
+      .limit(4);
 
-    res.status(200).json(highlightedConcerts);
+    return successResponse(res, 'Concerts retrieved successfully', highlightedConcerts);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };

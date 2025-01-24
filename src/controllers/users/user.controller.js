@@ -1,11 +1,11 @@
 import User from '../../models/user.model.js';
 import Concert from '../../models/concerts.model.js';
-
+import { successResponse, errorResponse } from '../../utils/responseHelper.js';
 export const profileUserController = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).populate('favoriteConcerts', 'title date location band').populate('subscribedBands', 'bandName genre image');
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.status(200).json({
+    if (!user) return errorResponse(res, 404, 'User not found');
+    return successResponse(res, 'Your profile has been successfully loaded', {
       id: user._id,
       username: user.username,
       email: user.email,
@@ -15,7 +15,7 @@ export const profileUserController = async (req, res) => {
       updatedAt: user.updatedAt
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
 
@@ -23,40 +23,46 @@ export const addFavoriteConcert = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     const concert = await Concert.findById(req.params.concertId);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    if (!concert) return res.status(404).json({ message: 'Concert not found' });
+    if (!user) return errorResponse(res, 404, 'User not found');
+    if (!concert) return errorResponse(res, 404, 'User not found');
     if (user.favoriteConcerts.includes(concert._id)) {
-      return res.json({ message: 'Concert is already in favorites' });
+      return errorResponse(res, 409, 'Concert is already in favorites');
     }
     user.favoriteConcerts.push(concert._id);
     await user.save();
-    res.status(200).json({ message: 'Concert add to favorites', favoriteConcerts: user.favoriteConcerts });
+    return successResponse(res, 'Concert added to favorites', {
+      favoriteConcerts: user.favoriteConcerts
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
 
 export const removeFavoriteConcert = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) return errorResponse(res, 404, 'User not found');
 
     user.favoriteConcerts = user.favoriteConcerts.filter(concertId => concertId.toString() !== req.params.concertId);
     await user.save();
 
-    res.status(200).json({ message: 'Concert removed from favorites', favoriteConcerts: user.favoriteConcerts });
+    return successResponse(res, 'Concert remove from favorites', {
+      favoriteConcerts: user.favoriteConcerts
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
 
 export const getFavoriteConcerts = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).populate('favoriteConcerts');
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) return errorResponse(res, 404, 'User not found');
 
-    res.status(200).json({ favoriteConcerts: user.favoriteConcerts });
+    return successResponse(res, 'List concerts successfully', {
+      favoriteConcerts: user.favoriteConcerts
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };

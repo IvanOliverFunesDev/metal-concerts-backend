@@ -2,12 +2,13 @@ import Band from '../../models/band.model.js';
 import Concert from '../../models/concerts.model.js';
 // eslint-disable-next-line no-unused-vars
 import User from '../../models/user.model.js';
+import { successResponse, errorResponse } from '../../utils/responseHelper.js';
 
 export const profileBandController = async (req, res) => {
   try {
     const user = await Band.findById(req.user.id).populate('subscribers');
     if (!user) return res.status(404).json({ message: 'User not found' });
-    res.status(200).json({
+    return successResponse(res, 'Your profile has been successfully loaded', {
       id: user._id,
       username: user.bandName,
       email: user.email,
@@ -19,7 +20,7 @@ export const profileBandController = async (req, res) => {
       updatedAt: user.updatedAt
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
 
@@ -33,7 +34,7 @@ export const getBandPublicProfile = async (req, res) => {
     const subscribersCount = band.subscribers ? band.subscribers.length : 0;
 
     const concerts = await Concert.find({ band: cleanId }).select('title date location');
-    res.status(200).json({
+    return successResponse(res, 'Band profile loaded successfully', {
       id: band._id,
       bandName: band.bandName,
       genre: band.genre,
@@ -43,7 +44,7 @@ export const getBandPublicProfile = async (req, res) => {
       concerts
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
 
@@ -71,9 +72,9 @@ export const getAllBands = async (req, res) => {
       subscribersCount: band.subscribers ? band.subscribers.length : 0
     }));
 
-    res.status(200).json(formattedBands);
+    return successResponse(res, 'All bands retrieved successfully', formattedBands);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
 
@@ -84,11 +85,11 @@ export const updateBandProfile = async (req, res) => {
 
     const band = await Band.findById(id.trim());
     if (!band) {
-      return res.status(404).json({ message: 'Band not found' });
+      return errorResponse(res, 404, 'Band not found');
     }
 
     if (band._id.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Unauthorized: You can only update your own band profile' });
+      return errorResponse(res, 403, 'Unauthorized: You can only update your own band profile');
     }
 
     band.bandName = bandName || band.bandName;
@@ -98,8 +99,7 @@ export const updateBandProfile = async (req, res) => {
 
     await band.save();
 
-    res.status(200).json({
-      message: 'Band profile updated successfully',
+    return successResponse(res, 'Band profile update successfully', {
       band: {
         id: band._id,
         bandName: band.bandName,
@@ -109,6 +109,6 @@ export const updateBandProfile = async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
