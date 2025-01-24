@@ -1,12 +1,10 @@
 import { Router } from 'express';
-import { validateSchema } from '../middleware/validator-schema.middleware.js';
-import { checkRole } from '../middleware/check-role.middleware.js';
-import { authRequired } from '../middleware/validate-token.middleware.js';
-
 import { loginSchema } from '../schemas/auth/login-auth.schema.js';
 import { registerUserSchema } from '../schemas/auth/user-auth.schema.js';
 import { registerBandSchema } from '../schemas/auth/band-auth.schema.js';
-
+import { validateSchema } from '../middleware/validator-schema.middleware.js';
+import { checkRole } from '../middleware/check-role.middleware.js';
+import { authRequired } from '../middleware/validate-token.middleware.js';
 import { loginController, logoutController } from '../controllers/auth/auth.controller.js';
 import { registerUserController } from '../controllers/auth/user-auth.controller.js';
 import { registerBandController } from '../controllers/auth/band-auth.controller.js';
