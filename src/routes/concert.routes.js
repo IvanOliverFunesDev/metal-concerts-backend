@@ -1,10 +1,9 @@
 import { Router } from 'express';
-
+import { concertSchema, concertUpdateSchema } from '../schemas/auth/create-concerts.schema.js';
 import { checkOwnerShip } from '../middleware/check-owner-ship.middleware.js';
 import { validateSchema } from '../middleware/validator-schema.middleware.js';
 import { checkRole } from '../middleware/check-role.middleware.js';
 import { authRequired } from '../middleware/validate-token.middleware.js';
-
 import {
   createConcertController,
   deleteConcertController,
@@ -14,7 +13,6 @@ import {
   getUpcomingConcertsController,
   updateConcertController
 } from '../controllers/concerts/concert.controller.js';
-import { concertSchema, concertUpdateSchema } from '../schemas/auth/create-concerts.schema.js';
 
 const router = Router();
 

@@ -1,8 +1,6 @@
 import { Router } from 'express';
-
 import { authRequired } from '../middleware/validate-token.middleware.js';
 import { checkRole } from '../middleware/check-role.middleware.js';
-
 import {
   subscribeToBand,
   unsubscribeFromBand,

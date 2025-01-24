@@ -24,6 +24,10 @@ const concertsSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Band',
     requred: true
+  },
+  averageRating: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true,
