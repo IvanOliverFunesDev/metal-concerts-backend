@@ -24,16 +24,37 @@ export const profileBandController = async (req, res) => {
   }
 };
 
-export const getBandPublicProfile = async (req, res) => {
+export const getBandPublicProfileController = async (req, res) => {
   try {
     const { id } = req.params;
     const cleanId = id.trim();
     const band = await Band.findById(cleanId);
+
     if (!band) return res.status(404).json({ message: 'Band not found' });
 
     const subscribersCount = band.subscribers ? band.subscribers.length : 0;
 
-    const concerts = await Concert.find({ band: cleanId }).select('title date location');
+    const allConcerts = await Concert.find({ band: cleanId }).select('title date location');
+
+    const upcomingConcerts = allConcerts
+      .filter(concert => concert.date >= new Date())
+      .map(concert => ({
+        id: concert._id,
+        title: concert.title,
+        date: concert.date,
+        location: concert.location
+      }));
+
+    const pastConcerts = allConcerts
+      .filter(concert => concert.date < new Date())
+      .map(concert => ({
+        id: concert._id,
+        title: concert.title,
+        date: concert.date,
+        location: concert.location,
+        message: 'This concert has ended'
+      }));
+
     return successResponse(res, 'Band profile loaded successfully', {
       id: band._id,
       bandName: band.bandName,
@@ -41,14 +62,15 @@ export const getBandPublicProfile = async (req, res) => {
       description: band.description,
       image: band.image,
       subscribersCount,
-      concerts
+      upcomingConcerts,
+      pastConcerts
     });
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
 
-export const getAllBands = async (req, res) => {
+export const getAllBandsController = async (req, res) => {
   try {
     const { bandName, genre } = req.query;
     const filters = {};
@@ -78,7 +100,7 @@ export const getAllBands = async (req, res) => {
   }
 };
 
-export const updateBandProfile = async (req, res) => {
+export const updateBandProfileController = async (req, res) => {
   try {
     const { id } = req.params;
     const { bandName, genre, description, image } = req.body;

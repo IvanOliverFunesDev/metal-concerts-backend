@@ -1,6 +1,6 @@
 import Review from '../../models/review.model.js';
 import Concert from '../../models/concerts.model.js';
-import { successResponse, errorResponse } from '../utils/responseHelper.js';
+import { successResponse, errorResponse } from '../../utils/responseHelper.js';
 
 export const createReviewController = async (req, res) => {
   try {

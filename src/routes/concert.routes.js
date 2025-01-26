@@ -17,10 +17,11 @@ import {
 const router = Router();
 
 router.post('/', authRequired, checkRole('band'), validateSchema(concertSchema), createConcertController);
+router.get('/recent', getUpcomingConcertsController);
+router.get('/highlighted', getHighlightedConcertsController);
 router.delete('/:id', authRequired, checkRole('band'), checkOwnerShip, deleteConcertController);
 router.put('/:id', authRequired, checkRole('band'), checkOwnerShip, validateSchema(concertUpdateSchema), updateConcertController);
 router.get('/', getAllConcertsController);
 router.get('/:id', getConcertByIdController);
-router.get('/recent', getUpcomingConcertsController);
-router.get('/highlighted', getHighlightedConcertsController);
+
 export default router;
