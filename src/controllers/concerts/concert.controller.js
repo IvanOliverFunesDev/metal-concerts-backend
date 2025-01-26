@@ -5,7 +5,7 @@ import { errorResponse, successResponse } from '../../utils/responseHelper.js';
 export const getAllConcertsController = async (req, res) => {
   try {
     const { title, location, date, bandName, genre } = req.query;
-    const filters = {};
+    const filters = { date: { $gte: new Date() } };
 
     if (title) {
       const cleanTitle = title.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
