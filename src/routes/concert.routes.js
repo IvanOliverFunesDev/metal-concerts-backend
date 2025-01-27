@@ -9,7 +9,9 @@ import {
   deleteConcertController,
   getAllConcertsController,
   getConcertByIdController,
+  getGenresController,
   getHighlightedConcertsController,
+  getLocationsController,
   getUpcomingConcertsController,
   updateConcertController
 } from '../controllers/concerts/concert.controller.js';
@@ -17,6 +19,8 @@ import {
 const router = Router();
 
 router.post('/', authRequired, checkRole('band'), validateSchema(concertSchema), createConcertController);
+router.get('/genres', getGenresController);
+router.get('/locations', getLocationsController);
 router.get('/recent', getUpcomingConcertsController);
 router.get('/highlighted', getHighlightedConcertsController);
 router.delete('/:id', authRequired, checkRole('band'), checkOwnerShip, deleteConcertController);

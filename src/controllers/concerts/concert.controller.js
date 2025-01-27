@@ -168,3 +168,23 @@ export const getHighlightedConcertsController = async (req, res) => {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
+
+export const getGenresController = async (req, res) => {
+  try {
+    const genres = await Band.distinct('genre');
+    if (!genres) return errorResponse(res, 404, 'Band not found');
+    return successResponse(res, 'Lista de generos:', { genres });
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
+};
+
+export const getLocationsController = async (req, res) => {
+  try {
+    const locations = await Concert.distinct('location');
+    if (!locations) return errorResponse(res, 404, 'Locations not found');
+    return successResponse(res, 'Lista de localizaciones:', { locations });
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error'[{ message: error.message }]);
+  }
+};
