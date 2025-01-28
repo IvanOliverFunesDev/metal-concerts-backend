@@ -1,7 +1,6 @@
 // TODO registro banda
 import Band from '../../models/band.model.js';
 import bcrypt from 'bcryptjs';
-import { generateAccessToken } from '../../services/jwt.js';
 import { successResponse, errorResponse } from '../../utils/responseHelper.js';
 
 export const registerBandController = async (req, res) => {
@@ -17,18 +16,18 @@ export const registerBandController = async (req, res) => {
       email,
       password: passwordHash,
       genre,
-      description
+      description,
+      status: 'pending'
     });
     const bandSaved = await newBand.save();
-    const token = await generateAccessToken({ id: bandSaved._id, role: 'band' });
 
-    res.cookie('token', token);
-    return successResponse(res, 'You have registered successfully', {
+    return successResponse(res, 'Band registered successfully. Awaiting admin approval', {
       id: bandSaved._id,
       bandName: bandSaved.bandName,
       email: bandSaved.email,
       genre: bandSaved.genre,
       description: bandSaved.description,
+      status: bandSaved.status,
       createdAt: bandSaved.createdAt,
       updatedAt: bandSaved.updatedAt
     });

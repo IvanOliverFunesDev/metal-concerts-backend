@@ -5,7 +5,7 @@ import { registerBandSchema } from '../schemas/auth/band-auth.schema.js';
 import { validateSchema } from '../middleware/validator-schema.middleware.js';
 import { checkRole } from '../middleware/check-role.middleware.js';
 import { authRequired } from '../middleware/validate-token.middleware.js';
-import { loginController, logoutController } from '../controllers/auth/auth.controller.js';
+import { loginController, logoutController, verifyTokenController } from '../controllers/auth/auth.controller.js';
 import { registerUserController } from '../controllers/auth/user-auth.controller.js';
 import { registerBandController } from '../controllers/auth/band-auth.controller.js';
 import { profileUserController } from '../controllers/users/user.controller.js';
@@ -22,5 +22,6 @@ router.post('/register/band', validateSchema(registerBandSchema), registerBandCo
 router.post('/logout', logoutController);
 router.get('/profile/user', authRequired, checkRole('user'), profileUserController);
 router.get('/profile/band', authRequired, checkRole('band'), profileBandController);
+router.get('/verify', verifyTokenController);
 
 export default router;
