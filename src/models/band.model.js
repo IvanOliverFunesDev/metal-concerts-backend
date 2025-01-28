@@ -34,7 +34,12 @@ const bandsSchema = new mongoose.Schema({
   subscribers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
+  status: {
+    type: String,
+    enum: ['pending', 'approved', 'reject'],
+    default: 'pending'
+  }
 }, {
   timestamps: true,
 });

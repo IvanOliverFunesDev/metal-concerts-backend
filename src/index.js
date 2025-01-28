@@ -14,5 +14,4 @@ if (process.argv[1] === new URL(import.meta.url).pathname) {
   });
 }
 
-export default app;  // 👈 Asegurar que esta línea está presente
-// TODO
+export default app;
