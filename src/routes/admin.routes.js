@@ -1,15 +1,15 @@
 import { Router } from 'express';
 import { authRequired } from '../middleware/validate-token.middleware.js';
-import { checkAdmin } from '../middleware/check-admin.middleware.js';
-import { approveBandController, rejectBandController } from '../controllers/admin/band-approval.controller.js';
+import { approveBandController, getBandByStatusApproved, rejectBandController } from '../controllers/admin/band-approval.controller.js';
 import User from '../models/user.model.js';
 import { successResponse, errorResponse } from '../utils/responseHelper.js';
 import bcrypt from 'bcryptjs';
+import { checkUserRole } from '../middleware/check-role.middleware.js';
 
 const router = Router();
-
-router.patch('/bands/:id/approve', authRequired, checkAdmin, approveBandController);
-router.patch('/bands/:id/reject', authRequired, checkAdmin, rejectBandController);
+router.get('/bands/pending', authRequired, checkUserRole('admin'), getBandByStatusApproved);
+router.patch('/bands/:id/approved', authRequired, checkUserRole('admin'), approveBandController);
+router.patch('/bands/:id/reject', authRequired, checkUserRole('admin'), rejectBandController);
 router.post('/create-admin', async (req, res) => {
   const { email, password, username } = req.body;
 

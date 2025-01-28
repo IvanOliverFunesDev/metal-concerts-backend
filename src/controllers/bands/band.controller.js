@@ -73,7 +73,7 @@ export const getBandPublicProfileController = async (req, res) => {
 export const getAllBandsController = async (req, res) => {
   try {
     const { bandName, genre } = req.query;
-    const filters = {};
+    const filters = { status: 'approved' };
 
     if (bandName) {
       filters.bandName = { $regex: `.*${bandName}.*`, $options: 'i' };

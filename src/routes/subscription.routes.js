@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authRequired } from '../middleware/validate-token.middleware.js';
-import { checkRole } from '../middleware/check-role.middleware.js';
+import { checkUserRole, checkBandStatus } from '../middleware/check-role.middleware.js';
 import {
   subscribeToBand,
   unsubscribeFromBand,
@@ -9,10 +9,10 @@ import {
 } from '../controllers/subscription.controller.js';
 
 const router = Router();
-router.post('/subscribe/:bandId', authRequired, checkRole('user'), subscribeToBand);
-router.delete('/unsubscribe/:bandId', authRequired, checkRole('user'), unsubscribeFromBand);
-router.get('/subscriptions', authRequired, checkRole('user'), getUserSubscriptions);
+router.post('/subscribe/:bandId', authRequired, checkUserRole('user'), checkBandStatus('approved'), subscribeToBand);
+router.delete('/unsubscribe/:bandId', authRequired, checkUserRole('user'), unsubscribeFromBand);
+router.get('/subscriptions', authRequired, checkUserRole('user'), getUserSubscriptions);
 
-router.get('/subscribers', authRequired, checkRole('band'), getBandSubscribers);
+router.get('/subscribers', authRequired, checkBandStatus('approved'), getBandSubscribers);
 
 export default router;
