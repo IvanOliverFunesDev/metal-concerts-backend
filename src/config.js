@@ -10,6 +10,10 @@ const config = {
   },
   security: {
     JWT_SECRET: process.env.JWT_SECRET,
+  },
+  email: {
+    USER: process.env.USER,
+    PASS: process.env.PASS
   }
 };
 
