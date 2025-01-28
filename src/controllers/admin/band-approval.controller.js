@@ -37,3 +37,16 @@ export const rejectBandController = async (req, res) => {
     return errorResponse(res, 500, error.message);
   }
 };
+
+export const getBandByStatusApproved = async (req, res) => {
+  try {
+    const filter = { status: 'pending' };
+    const bands = await Band.find(filter).select('bandName email description genre');
+    if (!bands) return successResponse(res, 'Band not found');
+    return successResponse(res, 'Get band succesfully', {
+      bands
+    });
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
+};
