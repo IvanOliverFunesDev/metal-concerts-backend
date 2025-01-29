@@ -39,7 +39,15 @@ const bandsSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'approved', 'reject'],
     default: 'pending'
-  }
+  },
+  resetPasswordCode: {
+    type: String,
+    default: null,
+  },
+  resetPasswordExpires: {
+    type: Date,
+    default: null,
+  },
 }, {
   timestamps: true,
 });

@@ -9,6 +9,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// 📌 Email de aprobación de banda
 export const sendApprovalEmail = async (email, bandName) => {
   const mailOptions = {
     from: `"Metal Souls" <${config.email.USER}>`,
@@ -31,6 +32,7 @@ export const sendApprovalEmail = async (email, bandName) => {
   }
 };
 
+// 📌 Email de rechazo de banda
 export const sendRejectionEmail = async (email, bandName) => {
   const mailOptions = {
     from: `"Metal Souls" <${config.email.USER}>`,
@@ -50,5 +52,31 @@ export const sendRejectionEmail = async (email, bandName) => {
     console.log(`✅ Rejection email sent to ${email}`);
   } catch (error) {
     console.error(`❌ Error sending rejection email: ${error.message}`);
+  }
+};
+
+// 📌 Email para restablecimiento de contraseña
+export const sendResetCodeEmail = async (email, username, resetCode) => {
+  const mailOptions = {
+    from: `"Metal Souls" <${config.email.USER}>`,
+    to: email,
+    subject: '🔑 Password Reset Code',
+    html: `
+      <h2>Password Reset Request</h2>
+      <p>Hi <b>${username}</b>,</p>
+      <p>We've received a request to reset your password.</p>
+      <p>Your verification code is: <b style="font-size: 18px; color: red;">${resetCode}</b></p>
+      <p>This code is valid for <b>10 minutes</b>.</p>
+      <p>If you didn't request this, you can ignore this email.</p>
+      <p>Stay secure,</p>
+      <p><b>Metal Souls Team 🤘</b></p>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`✅ Password reset email sent to ${email}`);
+  } catch (error) {
+    console.error(`❌ Error sending password reset email: ${error.message}`);
   }
 };
