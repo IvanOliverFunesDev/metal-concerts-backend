@@ -1,5 +1,7 @@
 // TODO registro usuario
 import User from '../../models/user.model.js';
+import Band from '../../models/band.model.js';
+
 import bcrypt from 'bcryptjs';
 import { generateAccessToken } from '../../services/jwt.js';
 import { successResponse, errorResponse } from '../../utils/responseHelper.js';
@@ -9,6 +11,9 @@ export const registerUserController = async (req, res) => {
   try {
     const userFound = await User.findOne({ email });
     if (userFound) return res.status(400).json({ message: 'The email is already in use' });
+
+    const bandFound = await Band.findOne({ email });
+    if (bandFound) return res.status(400).json({ message: 'The email is already in use' });
 
     const passwordHash = await bcrypt.hash(password, 10);
 

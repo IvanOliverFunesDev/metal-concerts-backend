@@ -7,6 +7,7 @@ import Band from '../../models/band.model.js';
 import { generateAccessToken } from '../../services/jwt.js';
 import { errorResponse, successResponse } from '../../utils/responseHelper.js';
 import { sendResetCodeEmail } from '../../services/email.service.js';
+import crypto from 'crypto';
 
 const JWT_SECRET = config.security.JWT_SECRET;
 
@@ -60,29 +61,32 @@ export const loginController = async (req, res) => {
   try {
     let userFound = await User.findOne({ email });
     let role = userFound?.role || 'user';
+    let status = 'N/A';
 
     if (!userFound) {
       userFound = await Band.findOne({ email });
       role = 'band';
+      status = userFound?.status || 'pending';
     }
     if (!userFound) {
       return errorResponse(res, 400, 'User or Band not found');
     }
 
-    if (role === 'band' && userFound.status !== 'approved') {
+    if (role === 'band' && status !== 'approved') {
       return successResponse(res, 'Your band has not been approved by an admin yet');
     }
 
     const isMatch = await bcrypt.compare(password, userFound.password);
-    if (!isMatch) return res.status(404).json({ meesage: 'Incorrect Password' });
+    if (!isMatch) return errorResponse(res, 400, 'Incorrect Password');
 
-    const token = await generateAccessToken({ id: userFound._id, role });
+    const token = await generateAccessToken({ id: userFound._id, role, status });
 
     res.cookie('token', token);
 
-    return successResponse(res, 'login succesfully', {
+    return successResponse(res, 'Login successful', {
       id: userFound._id,
       role,
+      status,
       username: userFound.username || userFound.bandName,
       email: userFound.email,
       createdAt: userFound.createdAt,

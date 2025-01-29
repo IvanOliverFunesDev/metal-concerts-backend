@@ -12,7 +12,6 @@ import { registerUserController } from '../controllers/auth/user-auth.controller
 import { registerBandController } from '../controllers/auth/band-auth.controller.js';
 import { profileUserController } from '../controllers/users/user.controller.js';
 import { profileBandController } from '../controllers/bands/band.controller.js';
-import { } from '../controllers/auth/forgot-password.controller.js';
 
 const router = Router();
 

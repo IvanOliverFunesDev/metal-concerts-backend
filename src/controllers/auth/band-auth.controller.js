@@ -1,5 +1,6 @@
 // TODO registro banda
 import Band from '../../models/band.model.js';
+import User from '../../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import { successResponse, errorResponse } from '../../utils/responseHelper.js';
 
@@ -7,7 +8,10 @@ export const registerBandController = async (req, res) => {
   const { email, password, bandName, genre, description } = req.body;
   try {
     const bandFound = await Band.findOne({ email });
-    if (bandFound) return res.status(400).json({ message: 'The email is already in use' });
+    if (bandFound) return errorResponse(res, 400, 'The email is already in use');
+
+    const userFound = await User.findOne({ email });
+    if (userFound) return errorResponse(res, 400, 'The email is already in use by a user');
 
     const passwordHash = await bcrypt.hash(password, 10);
 
