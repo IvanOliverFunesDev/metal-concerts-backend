@@ -24,6 +24,14 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user'
   },
+  resetPasswordCode: {
+    type: String,
+    default: null,
+  },
+  resetPasswordExpires: {
+    type: Date,
+    default: null,
+  },
   favoriteConcerts: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Concert'

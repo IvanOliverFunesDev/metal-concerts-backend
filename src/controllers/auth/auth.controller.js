@@ -6,6 +6,7 @@ import User from '../../models/user.model.js';
 import Band from '../../models/band.model.js';
 import { generateAccessToken } from '../../services/jwt.js';
 import { errorResponse, successResponse } from '../../utils/responseHelper.js';
+import { sendResetCodeEmail } from '../../services/email.service.js';
 
 const JWT_SECRET = config.security.JWT_SECRET;
 
@@ -97,4 +98,104 @@ export const logoutController = (req, res) => {
     expires: new Date(0)
   });
   return successResponse(res, 'logout completed');
+};
+
+export const sendResetCodeController = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await Band.findOne({ email });
+    }
+
+    if (!user) {
+      return errorResponse(res, 404, 'Email not found in our records');
+    }
+
+    const resetCode = crypto.randomInt(100000, 999999).toString();
+    const resetCodeExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 min
+
+    user.resetPasswordCode = resetCode;
+    user.resetPasswordExpires = resetCodeExpires;
+    await user.save();
+
+    await sendResetCodeEmail(user.email, user.username || user.bandName, resetCode);
+
+    return successResponse(res, 'Password reset code sent successfully');
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
+};
+
+export const verifyResetCodeController = async (req, res) => {
+  const { email, code } = req.body;
+
+  try {
+    // 🔍 Buscamos en ambas colecciones (Usuarios y Bandas)
+    let user = await User.findOne({ email });
+    let role = 'user';
+
+    if (!user) {
+      user = await Band.findOne({ email });
+      role = 'band';
+    }
+
+    if (!user) {
+      return errorResponse(res, 404, 'No account found with this email.');
+    }
+
+    // ⏳ Comprobamos si el código está registrado y no ha expirado
+    if (!user.resetPasswordCode || !user.resetPasswordExpires) {
+      return errorResponse(res, 400, 'No password reset request found for this account.');
+    }
+
+    const now = new Date();
+    if (user.resetPasswordExpires < now) {
+      return errorResponse(res, 400, 'The reset code has expired. Please request a new one.');
+    }
+
+    // ✅ Verificamos si el código coincide
+    if (user.resetPasswordCode !== code) {
+      return errorResponse(res, 400, 'Invalid reset code. Please check your email and try again.');
+    }
+
+    return successResponse(res, 'Reset code verified successfully. You can now reset your password.', {
+      email: user.email,
+      role,
+    });
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
+};
+
+export const resetPasswordController = async (req, res) => {
+  try {
+    const { email, code, newPassword } = req.body;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      user = await Band.findOne({ email });
+    }
+
+    if (!user) return errorResponse(res, 404, 'User or Band not found');
+
+    if (user.resetPasswordCode !== code) {
+      return errorResponse(res, 400, 'Invalid or expired reset code');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+
+    user.resetPasswordCode = null;
+    user.resetPasswordExpires = null;
+
+    await user.save();
+
+    return successResponse(res, 'Password reset successfully. You can now log in with your new password.');
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
 };
