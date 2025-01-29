@@ -7,9 +7,10 @@ import {
   getUserSubscriptions,
   getBandSubscribers
 } from '../controllers/subscription.controller.js';
+import { checkTargetBandStatus } from '../middleware/check-target-band-status.middleware.js';
 
 const router = Router();
-router.post('/subscribe/:bandId', authRequired, checkUserRole('user'), checkBandStatus('approved'), subscribeToBand);
+router.post('/subscribe/:bandId', authRequired, checkUserRole('user'), checkTargetBandStatus, subscribeToBand);
 router.delete('/unsubscribe/:bandId', authRequired, checkUserRole('user'), unsubscribeFromBand);
 router.get('/subscriptions', authRequired, checkUserRole('user'), getUserSubscriptions);
 

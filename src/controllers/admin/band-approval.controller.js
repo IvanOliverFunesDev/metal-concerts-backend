@@ -41,7 +41,7 @@ export const rejectBandController = async (req, res) => {
 export const getBandByStatusApproved = async (req, res) => {
   try {
     const filter = { status: 'pending' };
-    const bands = await Band.find(filter).select('bandName email description genre');
+    const bands = await Band.find(filter).select('bandName email description genre status');
     if (!bands) return successResponse(res, 'Band not found');
     return successResponse(res, 'Get band succesfully', {
       bands
