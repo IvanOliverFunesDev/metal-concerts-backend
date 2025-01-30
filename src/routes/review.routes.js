@@ -7,7 +7,6 @@ import { checkUserRole } from '../middleware/check-role.middleware.js';
 import {
   createReviewController,
   deleteReviewController,
-  getConcertRatingController,
   getConcertReviewsController,
   updateReviewController,
 } from '../controllers/review/review.controller.js';
@@ -17,6 +16,5 @@ router.post('/:concertId', authRequired, checkUserRole('user'), validateSchema(r
 router.put('/:concertId', authRequired, checkUserRole('user'), validateSchema(reviewSchema), updateReviewController);
 router.delete('/:concertId', authRequired, checkUserRole('user'), deleteReviewController);
 router.get('/:concertId', getConcertReviewsController);
-router.get('/:concertId/rating', getConcertRatingController);
 
 export default router;

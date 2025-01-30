@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { GENRES } from '../../constants/genres.js';
 
 export const registerBandSchema = z.object({
   bandName: z
@@ -10,5 +11,5 @@ export const registerBandSchema = z.object({
   description: z
     .string().min(10, { message: 'La descripción debe tener al menos 10 caracteres' }).max(500),
   genre: z
-    .string().min(3, { message: 'El género es obligatorio' }),
+    .enum([...GENRES], { message: 'Debe seleccionar un género válido' }),
 });
