@@ -63,6 +63,8 @@ export const getBandPublicProfileController = async (req, res) => {
       image: band.image,
       subscribersCount,
       upcomingConcerts,
+      averageRating: band.averageRating,
+      totalReviews: band.totalReviews,
       pastConcerts
     });
   } catch (error) {
@@ -83,7 +85,7 @@ export const getAllBandsController = async (req, res) => {
       filters.genre = { $regex: `.*${genre}.*`, $options: 'i' };
     }
 
-    const bands = await Band.find(filters).select('bandName genre description image subscribers');
+    const bands = await Band.find(filters).select('bandName genre description image subscribers averageRating totalReviews');
 
     const formattedBands = bands.map(band => ({
       id: band._id,
@@ -91,7 +93,9 @@ export const getAllBandsController = async (req, res) => {
       genre: band.genre,
       description: band.description,
       image: band.image,
-      subscribersCount: band.subscribers ? band.subscribers.length : 0
+      subscribersCount: band.subscribers ? band.subscribers.length : 0,
+      averageRating: band.averageRating,
+      totalReviews: band.totalReviews
     }));
 
     return successResponse(res, 'All bands retrieved successfully', formattedBands);

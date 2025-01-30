@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { GENRES } from '../constants/genres.js';
 
 const bandsSchema = new mongoose.Schema({
   bandName: {
@@ -25,6 +26,7 @@ const bandsSchema = new mongoose.Schema({
   genre: {
     type: String,
     required: true,
+    enum: GENRES, // 🔥 Solo permitirá valores de la lista
     trim: true,
   },
   image: {
@@ -48,6 +50,8 @@ const bandsSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  averageRating: { type: Number, default: 0 },
+  totalReviews: { type: Number, default: 0 },
 }, {
   timestamps: true,
 });

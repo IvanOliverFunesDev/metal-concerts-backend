@@ -1,6 +1,7 @@
 import Concert from '../../models/concerts.model.js';
 import Band from '../../models/band.model.js';
 import { errorResponse, successResponse } from '../../utils/responseHelper.js';
+import { GENRES } from '../../constants/genres.js';
 
 export const getAllConcertsController = async (req, res) => {
   try {
@@ -170,13 +171,7 @@ export const getHighlightedConcertsController = async (req, res) => {
 };
 
 export const getGenresController = async (req, res) => {
-  try {
-    const genres = await Band.distinct('genre');
-    if (!genres) return errorResponse(res, 404, 'Band not found');
-    return successResponse(res, 'Lista de generos:', { genres });
-  } catch (error) {
-    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
-  }
+  return successResponse(res, 'Genres retrieved successfully', GENRES);
 };
 
 export const getLocationsController = async (req, res) => {
