@@ -75,6 +75,18 @@ export const getConcertByIdController = async (req, res) => {
     }
 
     const subscribersCount = concert.band.subscribers ? concert.band.subscribers.length : 0;
+    // 🔹 Buscar las bandas del mismo género, ordenadas por mejor rating
+    const relatedBands = await Band.find({ genre: concert.band.genre })
+      .sort({ averageRating: -1 }) // 🔥 De mayor a menor rating
+      .limit(5);
+
+    // 🔹 Obtener conciertos futuros de esas bandas
+    const relatedConcerts = await Concert.find({
+      band: { $in: relatedBands.map(band => band._id) },
+      date: { $gte: new Date() } // 🔥 Solo conciertos futuros
+    })
+      .limit(5)
+      .populate('band', 'bandName genre image');
 
     return successResponse(res, 'Concert details retrieved successfully', {
       id: concert._id,
@@ -88,7 +100,19 @@ export const getConcertByIdController = async (req, res) => {
         genre: concert.band.genre,
         image: concert.band.image,
         subscribersCount
-      }
+      },
+      relatedConcerts: relatedConcerts.map(concert => ({
+        id: concert._id,
+        title: concert.title,
+        date: concert.date,
+        location: concert.location,
+        band: {
+          bandId: concert.band._id,
+          bandName: concert.band.bandName,
+          genre: concert.band.genre,
+          image: concert.band.image
+        }
+      }))
     });
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
