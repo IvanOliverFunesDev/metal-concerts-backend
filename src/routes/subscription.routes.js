@@ -13,7 +13,6 @@ const router = Router();
 router.post('/subscribe/:bandId', authRequired, checkUserRole('user'), checkTargetBandStatus, subscribeToBand);
 router.delete('/unsubscribe/:bandId', authRequired, checkUserRole('user'), unsubscribeFromBand);
 router.get('/subscriptions', authRequired, checkUserRole('user'), getUserSubscriptions);
-
 router.get('/subscribers', authRequired, checkBandStatus('approved'), getBandSubscribers);
 
 export default router;
