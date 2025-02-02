@@ -15,6 +15,10 @@ const concertsSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
+  image: {
+    type: String,
+    trim: true
+  },
   location: {
     type: String,
     required: true,

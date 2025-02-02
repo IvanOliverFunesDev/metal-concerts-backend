@@ -2,6 +2,7 @@ import Concert from '../../models/concerts.model.js';
 import Band from '../../models/band.model.js';
 import { errorResponse, successResponse } from '../../utils/responseHelper.js';
 import { GENRES } from '../../constants/genres.js';
+import { LOCATIONS } from '../../constants/locations.js';
 
 export const getAllConcertsController = async (req, res) => {
   try {
@@ -56,8 +57,16 @@ export const getAllConcertsController = async (req, res) => {
     if (concerts.length === 0) {
       return errorResponse(res, 404, 'No concerts found matching the search criteria');
     }
-
-    return successResponse(res, 'Concerts retrieved successfully', concerts);
+    const formattedConcerts = concerts.map(concert => ({
+      id: concert._id, // Transformamos `_id` en `id`
+      title: concert.title,
+      description: concert.description,
+      date: concert.date,
+      location: concert.location,
+      image: concert.image,
+      band: concert.band // Mantenemos `band` tal cual está porque ya tiene `bandName`, `genre`, `image`
+    }));
+    return successResponse(res, 'Concerts retrieved successfully', formattedConcerts);
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
@@ -76,17 +85,13 @@ export const getConcertByIdController = async (req, res) => {
 
     const subscribersCount = concert.band.subscribers ? concert.band.subscribers.length : 0;
     // 🔹 Buscar las bandas del mismo género, ordenadas por mejor rating
-    const relatedBands = await Band.find({ genre: concert.band.genre })
-      .sort({ averageRating: -1 }) // 🔥 De mayor a menor rating
-      .limit(5);
+    const relatedBands = await Band.find({ genre: concert.band.genre }).sort({ averageRating: -1 }).limit(5);
 
     // 🔹 Obtener conciertos futuros de esas bandas
     const relatedConcerts = await Concert.find({
       band: { $in: relatedBands.map(band => band._id) },
       date: { $gte: new Date() } // 🔥 Solo conciertos futuros
-    })
-      .limit(5)
-      .populate('band', 'bandName genre image');
+    }).limit(5).populate('band', 'bandName genre image');
 
     return successResponse(res, 'Concert details retrieved successfully', {
       id: concert._id,
@@ -94,8 +99,10 @@ export const getConcertByIdController = async (req, res) => {
       description: concert.description,
       date: concert.date,
       location: concert.location,
+      image: concert.image,
+      averageRating: concert.averageRating,
       band: {
-        bandId: concert.band._id,
+        id: concert.band._id,
         bandName: concert.band.bandName,
         genre: concert.band.genre,
         image: concert.band.image,
@@ -104,6 +111,8 @@ export const getConcertByIdController = async (req, res) => {
       relatedConcerts: relatedConcerts.map(concert => ({
         id: concert._id,
         title: concert.title,
+        image: concert.image,
+        description: concert.description,
         date: concert.date,
         location: concert.location,
         band: {
@@ -165,7 +174,17 @@ export const getUpcomingConcertsController = async (req, res) => {
       .sort({ date: 1 }) // 🔥 Ordenar por fecha ascendente (próximos eventos primero)
       .limit(4); // 🔥 Mostrar solo 4 conciertos
 
-    return successResponse(res, 'Concert ', upcomingConcerts);
+    const formattedConcerts = upcomingConcerts.map(concert => ({
+      id: concert._id,
+      title: concert.title,
+      description: concert.description,
+      date: concert.date,
+      location: concert.location,
+      image: concert.image,
+      band: concert.band
+    }));
+
+    return successResponse(res, 'Concert ', formattedConcerts);
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
@@ -188,7 +207,17 @@ export const getHighlightedConcertsController = async (req, res) => {
       .sort({ 'band.subscribers': -1 })
       .limit(4);
 
-    return successResponse(res, 'Concerts retrieved successfully', highlightedConcerts);
+    const formattedConcerts = highlightedConcerts.map(concert => ({
+      id: concert._id,
+      title: concert.title,
+      description: concert.description,
+      date: concert.date,
+      location: concert.location,
+      image: concert.image,
+      band: concert.band
+    }));
+
+    return successResponse(res, 'Concerts retrieved successfully', formattedConcerts);
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
@@ -199,11 +228,5 @@ export const getGenresController = async (req, res) => {
 };
 
 export const getLocationsController = async (req, res) => {
-  try {
-    const locations = await Concert.distinct('location');
-    if (!locations) return errorResponse(res, 404, 'Locations not found');
-    return successResponse(res, 'Lista de localizaciones:', { locations });
-  } catch (error) {
-    return errorResponse(res, 500, 'Internal Server Error'[{ message: error.message }]);
-  }
+  return successResponse(res, 'Locations retrieved successfully', LOCATIONS);
 };
