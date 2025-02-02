@@ -93,6 +93,12 @@ export const getConcertByIdController = async (req, res) => {
       date: { $gte: new Date() } // 🔥 Solo conciertos futuros
     }).limit(5).populate('band', 'bandName genre image');
 
+    const concertsOfSameBand = await Concert.find({
+      band: concert.band._id, // Misma banda
+      _id: { $ne: concert._id }, // Excluir el concierto actual
+      date: { $gte: new Date() } // Solo futuros conciertos
+    }).select('title date location image');
+
     return successResponse(res, 'Concert details retrieved successfully', {
       id: concert._id,
       title: concert.title,
@@ -121,6 +127,12 @@ export const getConcertByIdController = async (req, res) => {
           genre: concert.band.genre,
           image: concert.band.image
         }
+      })),
+      concertsOfSameBand: concertsOfSameBand.map(concert => ({
+        id: concert._id,
+        title: concert.title,
+        image: concert.image,
+        date: concert.date
       }))
     });
   } catch (error) {
@@ -192,21 +204,29 @@ export const getUpcomingConcertsController = async (req, res) => {
 
 export const getHighlightedConcertsController = async (req, res) => {
   try {
+    const { limit } = req.query;
+    const concertLimit = limit && limit !== 'all' ? parseInt(limit) : 0;
+
     // 🔥 Obtener las bandas con más suscriptores
-    const topBands = await Band.find().sort({ subscribers: -1 }).limit(5);
+    const topBands = await Band.find()
+      .sort({ subscribers: -1 }) // Ordenar por suscriptores
+      .select('bandName genre image subscribers') // Seleccionar solo estos campos
+      .lean(); // Convertir a objetos JavaScript simples
 
     if (!topBands.length) {
       return errorResponse(res, 404, 'No bands found');
     }
 
-    // 🔥 Obtener conciertos de esas bandas
+    // 🔥 Obtener los conciertos más próximos de esas bandas
     const highlightedConcerts = await Concert.find({
-      band: { $in: topBands.map(band => band._id) }
+      band: { $in: topBands.map(band => band._id) },
+      date: { $gte: new Date() } // Solo conciertos futuros
     })
+      .sort({ date: 1 }) // Ordenamos para obtener los más próximos
       .populate('band', 'bandName genre image subscribers')
-      .sort({ 'band.subscribers': -1 })
-      .limit(4);
+      .lean(); // Convertimos a objetos simples para ordenar correctamente
 
+    // 🔹 Formateamos la respuesta con los datos necesarios
     const formattedConcerts = highlightedConcerts.map(concert => ({
       id: concert._id,
       title: concert.title,
@@ -214,10 +234,26 @@ export const getHighlightedConcertsController = async (req, res) => {
       date: concert.date,
       location: concert.location,
       image: concert.image,
-      band: concert.band
+      band: {
+        id: concert.band._id,
+        bandName: concert.band.bandName,
+        genre: concert.band.genre,
+        image: concert.band.image,
+        subscribersCount: concert.band.subscribers.length
+      }
     }));
 
-    return successResponse(res, 'Concerts retrieved successfully', formattedConcerts);
+    // 🔥 Ordenamos por el número de suscriptores de la banda
+    formattedConcerts.sort((a, b) => b.band.subscribersCount - a.band.subscribersCount);
+
+    // 🔹 Aplicamos el límite si hay uno
+    const finalConcerts = concertLimit > 0 ? formattedConcerts.slice(0, concertLimit) : formattedConcerts;
+
+    if (!finalConcerts.length) {
+      return errorResponse(res, 404, 'No highlighted concerts found');
+    }
+
+    return successResponse(res, 'Highlighted concerts retrieved successfully', finalConcerts);
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
