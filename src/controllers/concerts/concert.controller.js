@@ -202,7 +202,53 @@ export const getUpcomingConcertsController = async (req, res) => {
   }
 };
 
-export const getHighlightedConcertsController = async (req, res) => {
+export const getTopRatedConcertsController = async (req, res) => {
+  try {
+    const { limit } = req.query;
+    const concertLimit = limit && limit !== 'all' ? parseInt(limit) : 0;
+
+    const topBands = await Band.find().sort({ averageRating: -1 }).select('bandName genre image averageRating').lean();
+
+    if (!topBands.length) {
+      return errorResponse(res, 404, 'No bands found');
+    }
+    const averageConcerts = await Concert.find({
+      band: { $in: topBands.map(band => band._id) },
+      date: { $gte: new Date() }
+    }).sort({ date: 1 }) // Ordenamos para obtener los más próximos
+      .populate('band', 'bandName genre image averageRating')
+      .lean(); // Convertimos a objetos simples para ordenar correctamente
+    const formattedConcerts = averageConcerts.map(concert => ({
+      id: concert._id,
+      title: concert.title,
+      description: concert.description,
+      date: concert.date,
+      location: concert.location,
+      image: concert.image,
+      band: {
+        id: concert.band._id,
+        bandName: concert.band.bandName,
+        genre: concert.band.genre,
+        image: concert.band.image,
+        averageRating: concert.band.averageRating
+      }
+    }));
+    formattedConcerts.sort((a, b) => b.band.averageRating - a.band.averageRating);
+
+    // 🔹 Aplicamos el límite si hay uno
+    const finalConcerts = concertLimit > 0 ? formattedConcerts.slice(0, concertLimit) : formattedConcerts;
+
+    if (!finalConcerts.length) {
+      return errorResponse(res, 404, 'No highlighted concerts found');
+    }
+
+    return successResponse(res, 'Highlighted concerts retrieved successfully', finalConcerts);
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
+};
+
+export const getMostPopularConcertsController = async (req, res) => {
   try {
     const { limit } = req.query;
     const concertLimit = limit && limit !== 'all' ? parseInt(limit) : 0;

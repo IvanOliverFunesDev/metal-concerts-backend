@@ -173,3 +173,38 @@ export const getPopularBandsController = async (req, res) => {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
+
+export const getTopRatedBandsController = async (req, res) => {
+  try {
+    const { limit } = req.query;
+    const bandLimit = limit && limit !== 'all' ? parseInt(limit) : 0;
+
+    const topRatedBands = await Band.find()
+      .select('bandName genre image averageRating') // Solo obtenemos estos campos
+      .lean(); // Convierte el resultado a objetos JavaScript simples
+
+    // Ordenamos manualmente por la cantidad de suscriptores
+    topRatedBands.sort((a, b) => b.averageRating - a.averageRating);
+
+    // Aplicamos el límite si hay uno
+    const limitedBands = bandLimit > 0 ? topRatedBands.slice(0, bandLimit) : topRatedBands;
+
+    // Formateamos la respuesta
+    const formattedBands = limitedBands.map(band => ({
+      id: band._id,
+      bandName: band.bandName,
+      description: band.description,
+      genre: band.genre,
+      image: band.image,
+      averageRating: band.averageRating, // Contamos los suscriptores
+    }));
+
+    if (formattedBands.length === 0) {
+      return errorResponse(res, 404, 'No bands found');
+    }
+
+    return successResponse(res, 'Popular bands retrieved successfully', formattedBands);
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
+};
