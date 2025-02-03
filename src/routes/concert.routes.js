@@ -10,8 +10,9 @@ import {
   getAllConcertsController,
   getConcertByIdController,
   getGenresController,
-  getHighlightedConcertsController,
+  getMostPopularConcertsController,
   getLocationsController,
+  getTopRatedConcertsController,
   getUpcomingConcertsController,
   updateConcertController
 } from '../controllers/concerts/concert.controller.js';
@@ -22,7 +23,8 @@ router.post('/', authRequired, checkBandStatus('approved'), validateSchema(conce
 router.get('/genres', getGenresController);
 router.get('/locations', getLocationsController);
 router.get('/recent', getUpcomingConcertsController);
-router.get('/highlighted', getHighlightedConcertsController);
+router.get('/most-popular', getMostPopularConcertsController);
+router.get('/top-rated', getTopRatedConcertsController);
 router.delete('/:id', authRequired, checkBandStatus('approved'), checkOwnerShip, deleteConcertController);
 router.put('/:id', authRequired, checkBandStatus('approved'), checkOwnerShip, validateSchema(concertUpdateSchema), updateConcertController);
 router.get('/', getAllConcertsController);
