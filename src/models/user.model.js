@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true,
     unique: true,
-    lowercase: true
+    lowercase: true // esto puede que tenga que quitarlo de alguna manera no?
   },
   username: {
     type: String,
