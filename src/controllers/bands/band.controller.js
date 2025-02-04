@@ -3,6 +3,7 @@ import Concert from '../../models/concerts.model.js';
 // eslint-disable-next-line no-unused-vars
 import User from '../../models/user.model.js';
 import { successResponse, errorResponse } from '../../utils/responseHelper.js';
+import { uploadImageToCloudinary, deleteImageFromCloudinary } from '../../services/cloudinary.service.js';
 
 export const profileBandController = async (req, res) => {
   try {
@@ -106,26 +107,38 @@ export const getAllBandsController = async (req, res) => {
 
 export const updateBandProfileController = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { bandName, genre, description, image } = req.body;
+    const bandId = req.user.id;
+    const { bandName, genre, description } = req.body;
+    const band = await Band.findById(bandId);
 
-    const band = await Band.findById(id.trim());
     if (!band) {
       return errorResponse(res, 404, 'Band not found');
     }
+    // 🔥 Si hay una nueva imagen en la request
+    let imageUrl = band.image;
+    if (req.file) {
+      console.log('🖼 Recibida imagen:', req.file);
+      if (band.image) {
+        console.log('🗑 Borrando imagen anterior de Cloudinary:', band.image);
 
-    if (band._id.toString() !== req.user.id) {
-      return errorResponse(res, 403, 'Unauthorized: You can only update your own band profile');
+        await deleteImageFromCloudinary(band.image); // 🗑️ Borrar imagen anterior
+      }
+      const uploadResult = await uploadImageToCloudinary(req.file.path);
+      console.log('☁️ Subida a Cloudinary:', uploadResult);
+
+      imageUrl = uploadResult.secure_url;
     }
 
+    // 🔹 Actualizar datos de la banda
     band.bandName = bandName || band.bandName;
     band.genre = genre || band.genre;
     band.description = description || band.description;
-    band.image = image || band.image;
+    band.image = imageUrl; // 📌 Guardar la nueva imagen en la BD
 
     await band.save();
+    console.log('✅ Banda actualizada correctamente:', band);
 
-    return successResponse(res, 'Band profile update successfully', {
+    return successResponse(res, 'Band profile updated successfully', {
       band: {
         id: band._id,
         bandName: band.bandName,

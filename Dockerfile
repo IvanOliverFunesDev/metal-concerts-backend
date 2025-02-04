@@ -1,5 +1,5 @@
 # 1️⃣ Usa una imagen oficial de Node.js (elige la versión que usas)
-FROM node:18
+FROM node:20
 
 # 2️⃣ Establece el directorio de trabajo dentro del contenedor
 WORKDIR /usr/src/app

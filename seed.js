@@ -5,10 +5,10 @@ import Band from './src/models/band.model.js';
 import Concert from './src/models/concerts.model.js';
 import Review from './src/models/review.model.js';
 
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
 import config from './src/config.js';
 
-dotenv.config();
+// dotenv.config();
 
 const locations = [
   'Madrid', 'Barcelona', 'Sevilla', 'Valencia', 'Bilbao', 'Granada', 'Málaga', 'Zaragoza',
