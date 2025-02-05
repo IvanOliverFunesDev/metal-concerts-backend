@@ -1,5 +1,4 @@
 import cloudinary from '../../src/config/cloudinary.js';
-// 🔥 Subir imagen a Cloudinary
 export const uploadImageToCloudinary = async (imagePath) => {
   try {
     const result = await cloudinary.uploader.upload(imagePath, {
@@ -12,7 +11,6 @@ export const uploadImageToCloudinary = async (imagePath) => {
   }
 };
 
-// 🔥 Eliminar imagen de Cloudinary
 export const deleteImageFromCloudinary = async (imageUrl) => {
   try {
     const publicId = imageUrl.split('/').pop().split('.')[0]; // 🔍 Extraer el publicId de la URL

@@ -1,6 +1,8 @@
+import connectDB from '../loaders/db.js';
 import expressLoader from './express.js';
 
-function init (app) {
+async function init (app) {
+  await connectDB();
   expressLoader(app);
 }
 
