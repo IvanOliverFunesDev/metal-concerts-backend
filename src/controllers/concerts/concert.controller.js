@@ -3,7 +3,9 @@ import Band from '../../models/band.model.js';
 import { errorResponse, successResponse } from '../../utils/responseHelper.js';
 import { GENRES } from '../../constants/genres.js';
 import { LOCATIONS } from '../../constants/locations.js';
+import { uploadImageToCloudinary } from '../../services/cloudinary.service.js';
 
+// 🎵 CONCERT CONTROLLERS
 export const getAllConcertsController = async (req, res) => {
   try {
     const { title, location, date, bandName, genre } = req.query;
@@ -140,14 +142,21 @@ export const getConcertByIdController = async (req, res) => {
   }
 };
 
+// 🎟️ CREATE, UPDATE & DELETE CONCERTS
 export const createConcertController = async (req, res) => {
   try {
     const { title, description, date, location } = req.body;
+    let imageUrl = '';
+    if (req.file) {
+      const uploadResult = await uploadImageToCloudinary(req.file.path);
+      imageUrl = uploadResult.secure_url;
+    }
     const newConcert = new Concert({
       title,
       description,
       date,
       location,
+      image: imageUrl,
       band: req.user.id
     });
     const savedConcert = await newConcert.save();
@@ -177,6 +186,7 @@ export const deleteConcertController = async (req, res) => {
   }
 };
 
+// 📅 UPCOMING & POPULAR CONCERTS
 export const getUpcomingConcertsController = async (req, res) => {
   try {
     const today = new Date(); // 📌 Obtener la fecha actual
@@ -305,6 +315,7 @@ export const getMostPopularConcertsController = async (req, res) => {
   }
 };
 
+// 🎸 FILTERS (GENRES & LOCATIONS)
 export const getGenresController = async (req, res) => {
   return successResponse(res, 'Genres retrieved successfully', GENRES);
 };
