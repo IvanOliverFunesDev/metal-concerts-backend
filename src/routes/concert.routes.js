@@ -4,6 +4,7 @@ import { checkOwnerShip } from '../middleware/check-owner-ship.middleware.js';
 import { validateSchema } from '../middleware/validator-schema.middleware.js';
 import { checkBandStatus } from '../middleware/check-role.middleware.js';
 import { authRequired } from '../middleware/validate-token.middleware.js';
+import { upload } from '../middleware/upload.middleware.js';
 import {
   createConcertController,
   deleteConcertController,
@@ -19,7 +20,7 @@ import {
 
 const router = Router();
 
-router.post('/', authRequired, checkBandStatus('approved'), validateSchema(concertSchema), createConcertController);
+router.post('/', authRequired, checkBandStatus('approved'), validateSchema(concertSchema), upload.single('file'), createConcertController);
 router.get('/genres', getGenresController);
 router.get('/locations', getLocationsController);
 router.get('/recent', getUpcomingConcertsController);
