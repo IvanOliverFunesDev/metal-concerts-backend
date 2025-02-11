@@ -14,43 +14,43 @@ const JWT_SECRET = config.security.JWT_SECRET;
 export const verifyTokenController = async (req, res) => {
   const { token } = req.cookies;
 
-  if (!token) return res.status(401).json({ message: 'Authentication token is missing' });
+  if (!token) return errorResponse(res, 401, 'Authentication token is missing');
 
   jwt.verify(token, JWT_SECRET, async (error, decoded) => {
-    if (error) return res.status(403).json({ message: 'Authentication token is invalid or expired' });
+    if (error) return errorResponse(res, 403, 'Authentication token is invalid or expired');
 
     const { id, role } = decoded;
     let userData;
 
     if (role === 'user') {
       userData = await User.findById(id);
-      if (!userData) return res.status(404).json({ message: 'User not found' });
+      if (!userData) return errorResponse(res, 404, 'User not found');
     } else if (role === 'band') {
       userData = await Band.findById(id);
-      if (!userData) return res.status(404).json({ message: 'Band not found' });
+      if (!userData) return errorResponse(res, 404, 'Band not found');
 
       // 🔹 Si la banda aún no está aprobada, denegar acceso
       if (userData.status === 'pending') {
-        return res.status(403).json({ message: 'Your band is under review. Please wait for approval.' });
+        return errorResponse(res, 403, 'Your band is under review. Please wait for approval');
       }
       if (userData.status === 'rejected') {
-        return res.status(403).json({ message: 'Your band application was rejected. Contact support for more info.' });
+        return errorResponse(res, 403, 'Your band application was rejected. Contact support for more info.');
       }
     } else if (role === 'admin') {
       userData = await User.findById(id);
       if (!userData || userData.role !== 'admin') {
-        return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+        return errorResponse(res, 403, 'Access denied. Admin privileges required.');
       }
     } else {
-      return res.status(400).json({ message: 'Invalid role' });
+      return errorResponse(res, 400, 'Invalid role');
     }
-
-    return res.json({
+    return successResponse(res, 'Verificado', {
       id: userData._id,
       username: userData.username || userData.bandName,
       email: userData.email,
       role,
       status: userData.status || 'N/A'
+
     });
   });
 };
