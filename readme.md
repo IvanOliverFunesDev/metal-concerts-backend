@@ -135,7 +135,8 @@ npm run test:coverage
 
 Este proyecto está licenciado bajo la Licencia ISC.
 
-## 📂 Estructura 
+## 📂 Estructura
+``` 
 📦src
  ┣ 📂config
  ┃ ┗ 📜cloudinary.js
@@ -208,3 +209,4 @@ Este proyecto está licenciado bajo la Licencia ISC.
  ┣ 📜app.js
  ┣ 📜config.js
  ┗ 📜index.js
+ ```
