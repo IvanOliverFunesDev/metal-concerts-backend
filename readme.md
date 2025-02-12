@@ -1,6 +1,7 @@
 ## 📌 Arquitectura
 
-![Esquema de Arquitectura](public/Frame%201.png)
+![Esquema de Arquitectura](public/frame1.png)
+
 # 🎸 Band & Concerts API - Backend
 
 Este proyecto es una plataforma para gestionar conciertos, bandas y suscripciones, con características de inicio de sesión, registro y control de usuarios, construido con Node.js, Express y MongoDB usando Mongoose.
@@ -133,3 +134,77 @@ npm run test:coverage
 ## 📄 Licencia
 
 Este proyecto está licenciado bajo la Licencia ISC.
+
+## 📂 Estructura 
+📦src
+ ┣ 📂config
+ ┃ ┗ 📜cloudinary.js
+ ┣ 📂constants
+ ┃ ┣ 📜genres.js
+ ┃ ┗ 📜locations.js
+ ┣ 📂controllers
+ ┃ ┣ 📂admin
+ ┃ ┃ ┗ 📜band-approval.controller.js
+ ┃ ┣ 📂auth
+ ┃ ┃ ┣ 📜auth.controller.js
+ ┃ ┃ ┣ 📜band-auth.controller.js
+ ┃ ┃ ┣ 📜forgot-password.controller.js
+ ┃ ┃ ┗ 📜user-auth.controller.js
+ ┃ ┣ 📂bands
+ ┃ ┃ ┗ 📜band.controller.js
+ ┃ ┣ 📂concerts
+ ┃ ┃ ┗ 📜concert.controller.js
+ ┃ ┣ 📂review
+ ┃ ┃ ┗ 📜review.controller.js
+ ┃ ┣ 📂users
+ ┃ ┃ ┗ 📜user.controller.js
+ ┃ ┗ 📜subscription.controller.js
+ ┣ 📂loaders
+ ┃ ┣ 📜db.js
+ ┃ ┣ 📜express.js
+ ┃ ┗ 📜index.js
+ ┣ 📂logs
+ ┃ ┣ 📜combined.log
+ ┃ ┗ 📜errors.log
+ ┣ 📂middleware
+ ┃ ┣ 📜check-admin.middleware.js
+ ┃ ┣ 📜check-owner-ship.middleware.js
+ ┃ ┣ 📜check-role.middleware.js
+ ┃ ┣ 📜check-target-band-status.middleware.js
+ ┃ ┣ 📜error-handling.middleware.js
+ ┃ ┣ 📜logger.middleware.js
+ ┃ ┣ 📜upload.middleware.js
+ ┃ ┣ 📜validate-token.middleware.js
+ ┃ ┗ 📜validator-schema.middleware.js
+ ┣ 📂models
+ ┃ ┣ 📜band.model.js
+ ┃ ┣ 📜concerts.model.js
+ ┃ ┣ 📜review.model.js
+ ┃ ┗ 📜user.model.js
+ ┣ 📂routes
+ ┃ ┣ 📜admin.routes.js
+ ┃ ┣ 📜auth.routes.js
+ ┃ ┣ 📜band.routes.js
+ ┃ ┣ 📜concert.routes.js
+ ┃ ┣ 📜index.routes.js
+ ┃ ┣ 📜review.routes.js
+ ┃ ┣ 📜subscription.routes.js
+ ┃ ┗ 📜user.routes.js
+ ┣ 📂schemas
+ ┃ ┗ 📂auth
+ ┃ ┃ ┣ 📜band-auth.schema.js
+ ┃ ┃ ┣ 📜create-concerts.schema.js
+ ┃ ┃ ┣ 📜login-auth.schema.js
+ ┃ ┃ ┣ 📜reset-password.schema.js
+ ┃ ┃ ┣ 📜review.schema.js
+ ┃ ┃ ┗ 📜user-auth.schema.js
+ ┣ 📂services
+ ┃ ┣ 📜cloudinary.service.js
+ ┃ ┣ 📜email.service.js
+ ┃ ┗ 📜jwt.js
+ ┣ 📂utils
+ ┃ ┣ 📜logger.js
+ ┃ ┗ 📜responseHelper.js
+ ┣ 📜app.js
+ ┣ 📜config.js
+ ┗ 📜index.js
