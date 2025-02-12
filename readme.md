@@ -1,3 +1,6 @@
+## 📌 Arquitectura
+
+![Esquema de Arquitectura](public/Frame%201.png)
 # 🎸 Band & Concerts API - Backend
 
 Este proyecto es una plataforma para gestionar conciertos, bandas y suscripciones, con características de inicio de sesión, registro y control de usuarios, construido con Node.js, Express y MongoDB usando Mongoose.
