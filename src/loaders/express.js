@@ -10,7 +10,7 @@ import { errorHandlingMiddleware } from '../middleware/error-handling.middleware
 export default function (app) {
   app.use(loggerMiddleware);
   app.use(cors({
-    origin: 'http://localhost:4200',
+    origin: ['http://localhost:4200', 'https://metal-concerts-frontend-prueba2-tau.vercel.app'],
     credentials: true
   }));
 
