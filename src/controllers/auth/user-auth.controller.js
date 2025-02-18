@@ -1,4 +1,3 @@
-// TODO registro usuario
 import User from '../../models/user.model.js';
 import Band from '../../models/band.model.js';
 
@@ -14,6 +13,9 @@ export const registerUserController = async (req, res) => {
 
     const bandFound = await Band.findOne({ email });
     if (bandFound) return res.status(400).json({ message: 'The email is already in use' });
+
+    const nameFound = await User.findOne({ username });
+    if (nameFound) return errorResponse(res, 400, 'The username is already in use');
 
     const passwordHash = await bcrypt.hash(password, 10);
 

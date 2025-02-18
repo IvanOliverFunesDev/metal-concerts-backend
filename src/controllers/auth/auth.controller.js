@@ -1,4 +1,3 @@
-// TODO Login para users y bands
 import jwt from 'jsonwebtoken';
 import config from '../../config.js';
 import bcrypt from 'bcryptjs';
@@ -73,7 +72,7 @@ export const loginController = async (req, res) => {
     }
 
     if (role === 'band' && status !== 'approved') {
-      return successResponse(res, 'Your band has not been approved by an admin yet');
+      return errorResponse(res, 403, 'Your band has not been approved by an admin yet');
     }
 
     const isMatch = await bcrypt.compare(password, userFound.password);
