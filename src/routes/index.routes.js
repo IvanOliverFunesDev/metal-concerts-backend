@@ -7,6 +7,11 @@ import bandRoutes from '../routes/band.routes.js';
 import reviewRoutes from '../routes/review.routes.js';
 import adminRoutes from '../routes/admin.routes.js';
 
+import swaggerUi from 'swagger-ui-express';
+import yaml from 'yamljs';
+
+const swaggerDocument = yaml.load('./swagger.yaml');
+
 const router = Router();
 
 router.use('/auth', authRoutes);
@@ -16,5 +21,7 @@ router.use('/subscriptions', subscriptionRoutes);
 router.use('/bands', bandRoutes);
 router.use('/reviews', reviewRoutes);
 router.use('/admin', adminRoutes);
+
+router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 export default router;
