@@ -1,16 +1,15 @@
 import User from '../../models/user.model.js';
 import Concert from '../../models/concerts.model.js';
 import { successResponse, errorResponse } from '../../utils/responseHelper.js';
+
 export const profileUserController = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).populate('favoriteConcerts', 'title date location band').populate('subscribedBands', 'bandName genre image');
+    const user = await User.findById(req.user.id);
     if (!user) return errorResponse(res, 404, 'User not found');
     return successResponse(res, 'Your profile has been successfully loaded', {
       id: user._id,
       username: user.username,
       email: user.email,
-      favoriteConcerts: user.favoriteConcerts,
-      subscribedBands: user.subscribedBands,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     });
@@ -56,9 +55,11 @@ export const removeFavoriteConcert = async (req, res) => {
 
 export const getFavoriteConcerts = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).populate('favoriteConcerts');
+    const user = await User.findById(req.user.id).populate({
+      path: 'favoriteConcerts',
+      populate: { path: 'band', select: 'id, bandName' }
+    });
     if (!user) return errorResponse(res, 404, 'User not found');
-
     return successResponse(res, 'List concerts successfully', {
       favoriteConcerts: user.favoriteConcerts
     });
