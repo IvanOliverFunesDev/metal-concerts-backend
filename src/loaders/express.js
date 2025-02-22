@@ -11,7 +11,9 @@ export default function (app) {
   app.use(loggerMiddleware);
   app.use(cors({
     origin: ['http://localhost:4200', 'https://metal-concerts-frontend-prueba2-tau.vercel.app'],
-    credentials: true
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
   }));
 
   app.use(morgan('combined', { stream: logger.stream }));
