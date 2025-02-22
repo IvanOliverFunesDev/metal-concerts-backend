@@ -81,11 +81,11 @@ export const loginController = async (req, res) => {
     const token = await generateAccessToken({ id: userFound._id, role, status });
 
     res.cookie('token', token, {
-      httpOnly: true,  // 🔥 Evita accesos de JavaScript y protege contra XSS
-      secure: process.env.NODE_ENV === 'production', // 🔥 Solo se envía por HTTPS en producción
-      sameSite: 'lax',  // 🔥 Permite el envío de cookies en peticiones normales
-      path: '/', // 🔥 Hace que la cookie esté disponible en todas las rutas del backend
-      maxAge: 24 * 60 * 60 * 1000 // 🔥 24 horas de duración
+      httpOnly: true,
+      secure: true,  // 🔥 Obligatorio en Render porque usa HTTPS
+      sameSite: 'none',  // 🔥 Permite que la cookie se envíe desde un dominio diferente
+      path: '/',
+      maxAge: 24 * 60 * 60 * 1000
     });
 
     return successResponse(res, 'Login successful', {
