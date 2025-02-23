@@ -57,11 +57,20 @@ export const getFavoriteConcerts = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).populate({
       path: 'favoriteConcerts',
-      populate: { path: 'band', select: 'id, bandName' }
+      populate: { path: 'band', select: 'bandName genre image' }
     });
     if (!user) return errorResponse(res, 404, 'User not found');
+    const formattedConcerts = user.favoriteConcerts.map(concert => ({
+      id: concert._id, // Convertimos `_id` en `id`
+      title: concert.title,
+      description: concert.description,
+      date: concert.date,
+      location: concert.location,
+      image: concert.image,
+      band: concert.band // `band` ya tiene los campos filtrados (bandName, genre, image)
+    }));
     return successResponse(res, 'List concerts successfully', {
-      favoriteConcerts: user.favoriteConcerts
+      favoriteConcerts: formattedConcerts
     });
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
