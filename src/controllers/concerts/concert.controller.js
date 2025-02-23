@@ -60,14 +60,15 @@ export const getAllConcertsController = async (req, res) => {
       return errorResponse(res, 404, 'No concerts found matching the search criteria');
     }
     const formattedConcerts = concerts.map(concert => ({
-      id: concert._id, // Transformamos `_id` en `id`
+      id: concert._id,
       title: concert.title,
       description: concert.description,
       date: concert.date,
       location: concert.location,
       image: concert.image,
-      band: concert.band // Mantenemos `band` tal cual está porque ya tiene `bandName`, `genre`, `image`
+      band: concert.band
     }));
+
     return successResponse(res, 'Concerts retrieved successfully', formattedConcerts);
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
