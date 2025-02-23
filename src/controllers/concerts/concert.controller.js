@@ -125,7 +125,7 @@ export const getConcertByIdController = async (req, res) => {
         date: concert.date,
         location: concert.location,
         band: {
-          bandId: concert.band._id,
+          id: concert.band._id,
           bandName: concert.band.bandName,
           genre: concert.band.genre,
           image: concert.band.image
