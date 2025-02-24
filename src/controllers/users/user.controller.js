@@ -42,7 +42,13 @@ export const removeFavoriteConcert = async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return errorResponse(res, 404, 'User not found');
 
-    user.favoriteConcerts = user.favoriteConcerts.filter(concertId => concertId.toString() !== req.params.concertId);
+    const concertId = req.params.concertId;
+
+    if (!user.favoriteConcerts.some(id => id.toString() === concertId)) {
+      return errorResponse(res, 400, 'This concert is not in your favorites');
+    }
+
+    user.favoriteConcerts = user.favoriteConcerts.filter(id => id.toString() !== concertId);
     await user.save();
 
     return successResponse(res, 'Concert remove from favorites');
