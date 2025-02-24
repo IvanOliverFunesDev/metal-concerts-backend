@@ -23,7 +23,7 @@ export const addFavoriteConcert = async (req, res) => {
     const user = await User.findById(req.user.id);
     const concert = await Concert.findById(req.params.concertId);
     if (!user) return errorResponse(res, 404, 'User not found');
-    if (!concert) return errorResponse(res, 404, 'User not found');
+    if (!concert) return errorResponse(res, 404, 'Concert not found');
     if (user.favoriteConcerts.includes(concert._id)) {
       return errorResponse(res, 409, 'Concert is already in favorites');
     }
@@ -45,9 +45,7 @@ export const removeFavoriteConcert = async (req, res) => {
     user.favoriteConcerts = user.favoriteConcerts.filter(concertId => concertId.toString() !== req.params.concertId);
     await user.save();
 
-    return successResponse(res, 'Concert remove from favorites', {
-      favoriteConcerts: user.favoriteConcerts
-    });
+    return successResponse(res, 'Concert remove from favorites');
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
