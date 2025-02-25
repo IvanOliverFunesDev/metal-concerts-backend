@@ -1,5 +1,6 @@
 import Concert from '../../models/concerts.model.js';
 import Band from '../../models/band.model.js';
+import User from '../../models/user.model.js';
 import { errorResponse, successResponse } from '../../utils/responseHelper.js';
 import { GENRES } from '../../constants/genres.js';
 import { LOCATIONS } from '../../constants/locations.js';
@@ -59,6 +60,17 @@ export const getAllConcertsController = async (req, res) => {
     if (concerts.length === 0) {
       return errorResponse(res, 404, 'No concerts found matching the search criteria');
     }
+
+    const userId = req.user?.id;
+    let favoriteConcerts = [];
+
+    if (userId) {
+      const user = await User.findById(userId).select('favoriteConcerts');
+      if (user) {
+        favoriteConcerts = new Set(user.favoriteConcerts.map(fav => fav.toString()));
+      }
+    }
+
     const formattedConcerts = concerts.map(concert => ({
       id: concert._id,
       title: concert.title,
@@ -66,7 +78,8 @@ export const getAllConcertsController = async (req, res) => {
       date: concert.date,
       location: concert.location,
       image: concert.image,
-      band: concert.band
+      band: concert.band,
+      isFavorite: favoriteConcerts.has(concert._id.toString())
     }));
 
     return successResponse(res, 'Concerts retrieved successfully', formattedConcerts);

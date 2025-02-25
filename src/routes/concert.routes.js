@@ -28,7 +28,7 @@ router.get('/most-popular', getMostPopularConcertsController);
 router.get('/top-rated', getTopRatedConcertsController);
 router.delete('/:id', authRequired, checkBandStatus('approved'), checkOwnerShip, deleteConcertController);
 router.put('/:id', authRequired, checkBandStatus('approved'), checkOwnerShip, validateSchema(concertUpdateSchema), updateConcertController);
-router.get('/', getAllConcertsController);
+router.get('/', authRequired, getAllConcertsController);
 router.get('/:id', getConcertByIdController);
 
 export default router;
