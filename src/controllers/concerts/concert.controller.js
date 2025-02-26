@@ -1,10 +1,10 @@
 import Concert from '../../models/concerts.model.js';
 import Band from '../../models/band.model.js';
-import User from '../../models/user.model.js';
 import { errorResponse, successResponse } from '../../utils/responseHelper.js';
 import { GENRES } from '../../constants/genres.js';
 import { LOCATIONS } from '../../constants/locations.js';
 import { uploadImageToCloudinary } from '../../services/cloudinary.service.js';
+import { markFavoriteConcerts } from '../../utils/concertsUtils.js';
 
 // 🎵 CONCERT CONTROLLERS
 export const getAllConcertsController = async (req, res) => {
@@ -61,26 +61,7 @@ export const getAllConcertsController = async (req, res) => {
       return errorResponse(res, 404, 'No concerts found matching the search criteria');
     }
 
-    const userId = req.user?.id;
-    let favoriteConcerts = [];
-
-    if (userId) {
-      const user = await User.findById(userId).select('favoriteConcerts');
-      if (user) {
-        favoriteConcerts = new Set(user.favoriteConcerts.map(fav => fav.toString()));
-      }
-    }
-
-    const formattedConcerts = concerts.map(concert => ({
-      id: concert._id,
-      title: concert.title,
-      description: concert.description,
-      date: concert.date,
-      location: concert.location,
-      image: concert.image,
-      band: concert.band,
-      isFavorite: favoriteConcerts.has(concert._id.toString())
-    }));
+    const formattedConcerts = await markFavoriteConcerts(concerts, req.user?.id);
 
     return successResponse(res, 'Concerts retrieved successfully', formattedConcerts);
   } catch (error) {
@@ -115,14 +96,19 @@ export const getConcertByIdController = async (req, res) => {
       date: { $gte: new Date() } // Solo futuros conciertos
     }).select('title date location image');
 
+    const concertWithFavorite = await markFavoriteConcerts(concert, req.user?.id);
+    const relatedConcertsWithFavorite = await markFavoriteConcerts(relatedConcerts, req.user?.id);
+    const concertsOfSameBandWithFavorite = await markFavoriteConcerts(concertsOfSameBand, req.user?.id);
+
     return successResponse(res, 'Concert details retrieved successfully', {
-      id: concert._id,
-      title: concert.title,
-      description: concert.description,
-      date: concert.date,
-      location: concert.location,
-      image: concert.image,
-      averageRating: concert.averageRating,
+      id: concertWithFavorite.id,
+      title: concertWithFavorite.title,
+      description: concertWithFavorite.description,
+      date: concertWithFavorite.date,
+      location: concertWithFavorite.location,
+      image: concertWithFavorite.image,
+      averageRating: concertWithFavorite.averageRating,
+      isFavorite: concertWithFavorite.isFavorite, // ✅ Aquí agregamos `isFavorite`
       band: {
         id: concert.band._id,
         bandName: concert.band.bandName,
@@ -130,25 +116,22 @@ export const getConcertByIdController = async (req, res) => {
         image: concert.band.image,
         subscribersCount
       },
-      relatedConcerts: relatedConcerts.map(concert => ({
-        id: concert._id,
+      relatedConcerts: relatedConcertsWithFavorite.map(concert => ({
+        id: concert.id,
         title: concert.title,
         image: concert.image,
         description: concert.description,
         date: concert.date,
         location: concert.location,
-        band: {
-          id: concert.band._id,
-          bandName: concert.band.bandName,
-          genre: concert.band.genre,
-          image: concert.band.image
-        }
+        band: concert.band,
+        isFavorite: concert.isFavorite // ✅ Se mantiene en los conciertos relacionados
       })),
-      concertsOfSameBand: concertsOfSameBand.map(concert => ({
-        id: concert._id,
+      concertsOfSameBand: concertsOfSameBandWithFavorite.map(concert => ({
+        id: concert.id,
         title: concert.title,
         image: concert.image,
-        date: concert.date
+        date: concert.date,
+        isFavorite: concert.isFavorite // ✅ Se mantiene en los conciertos de la misma banda
       }))
     });
   } catch (error) {
@@ -210,17 +193,9 @@ export const getUpcomingConcertsController = async (req, res) => {
       .sort({ date: 1 }) // 🔥 Ordenar por fecha ascendente (próximos eventos primero)
       .limit(4); // 🔥 Mostrar solo 4 conciertos
 
-    const formattedConcerts = upcomingConcerts.map(concert => ({
-      id: concert._id,
-      title: concert.title,
-      description: concert.description,
-      date: concert.date,
-      location: concert.location,
-      image: concert.image,
-      band: concert.band
-    }));
+    const formattedConcerts = await markFavoriteConcerts(upcomingConcerts, req.user?.id);
 
-    return successResponse(res, 'Concert ', formattedConcerts);
+    return successResponse(res, 'Concerts retrieved successfully', formattedConcerts);
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
@@ -231,40 +206,37 @@ export const getTopRatedConcertsController = async (req, res) => {
     const { limit } = req.query;
     const concertLimit = limit && limit !== 'all' ? parseInt(limit) : 0;
 
-    const topBands = await Band.find().sort({ averageRating: -1 }).select('bandName genre image averageRating').lean();
+    // 🔹 Obtener las bandas con mejor rating
+    const topBands = await Band.find()
+      .sort({ averageRating: -1 })
+      .select('bandName genre image averageRating')
+      .lean();
 
     if (!topBands.length) {
       return errorResponse(res, 404, 'No bands found');
     }
+
+    // 🔹 Obtener los conciertos de esas bandas con mejor rating
     const averageConcerts = await Concert.find({
       band: { $in: topBands.map(band => band._id) },
       date: { $gte: new Date() }
-    }).sort({ date: 1 }) // Ordenamos para obtener los más próximos
+    })
+      .sort({ date: 1 }) // 🔥 Conciertos más próximos primero
       .populate('band', 'bandName genre image averageRating')
-      .lean(); // Convertimos a objetos simples para ordenar correctamente
-    const formattedConcerts = averageConcerts.map(concert => ({
-      id: concert._id,
-      title: concert.title,
-      description: concert.description,
-      date: concert.date,
-      location: concert.location,
-      image: concert.image,
-      band: {
-        id: concert.band._id,
-        bandName: concert.band.bandName,
-        genre: concert.band.genre,
-        image: concert.band.image,
-        averageRating: concert.band.averageRating
-      }
-    }));
-    formattedConcerts.sort((a, b) => b.band.averageRating - a.band.averageRating);
+      .lean(); // 🔥 Convertir a objetos simples para mejor manejo
 
-    // 🔹 Aplicamos el límite si hay uno
-    const finalConcerts = concertLimit > 0 ? formattedConcerts.slice(0, concertLimit) : formattedConcerts;
-
-    if (!finalConcerts.length) {
+    if (!averageConcerts.length) {
       return errorResponse(res, 404, 'No highlighted concerts found');
     }
+
+    // 🔹 Aplicamos `markFavoriteConcerts` para añadir `isFavorite`
+    const concertsWithFavorites = await markFavoriteConcerts(averageConcerts, req.user?.id);
+
+    // 🔹 Ordenamos por la banda con mejor rating
+    concertsWithFavorites.sort((a, b) => b.band.averageRating - a.band.averageRating);
+
+    // 🔹 Aplicamos el límite si hay uno
+    const finalConcerts = concertLimit > 0 ? concertsWithFavorites.slice(0, concertLimit) : concertsWithFavorites;
 
     return successResponse(res, 'Highlighted concerts retrieved successfully', finalConcerts);
   } catch (error) {
@@ -279,7 +251,7 @@ export const getMostPopularConcertsController = async (req, res) => {
 
     // 🔥 Obtener las bandas con más suscriptores
     const topBands = await Band.find()
-      .sort({ subscribers: -1 }) // Ordenar por suscriptores
+      .sort({ subscribers: -1 }) // Ordenar por más suscriptores primero
       .select('bandName genre image subscribers') // Seleccionar solo estos campos
       .lean(); // Convertir a objetos JavaScript simples
 
@@ -292,36 +264,22 @@ export const getMostPopularConcertsController = async (req, res) => {
       band: { $in: topBands.map(band => band._id) },
       date: { $gte: new Date() } // Solo conciertos futuros
     })
-      .sort({ date: 1 }) // Ordenamos para obtener los más próximos
+      .sort({ date: 1 }) // 🔥 Ordenar por fecha de concierto más cercana
       .populate('band', 'bandName genre image subscribers')
-      .lean(); // Convertimos a objetos simples para ordenar correctamente
+      .lean(); // 🔥 Convertir a objetos simples para mejor manipulación
 
-    // 🔹 Formateamos la respuesta con los datos necesarios
-    const formattedConcerts = highlightedConcerts.map(concert => ({
-      id: concert._id,
-      title: concert.title,
-      description: concert.description,
-      date: concert.date,
-      location: concert.location,
-      image: concert.image,
-      band: {
-        id: concert.band._id,
-        bandName: concert.band.bandName,
-        genre: concert.band.genre,
-        image: concert.band.image,
-        subscribersCount: concert.band.subscribers.length
-      }
-    }));
-
-    // 🔥 Ordenamos por el número de suscriptores de la banda
-    formattedConcerts.sort((a, b) => b.band.subscribersCount - a.band.subscribersCount);
-
-    // 🔹 Aplicamos el límite si hay uno
-    const finalConcerts = concertLimit > 0 ? formattedConcerts.slice(0, concertLimit) : formattedConcerts;
-
-    if (!finalConcerts.length) {
+    if (!highlightedConcerts.length) {
       return errorResponse(res, 404, 'No highlighted concerts found');
     }
+
+    // 🔹 Aplicamos `markFavoriteConcerts` para incluir `isFavorite`
+    const concertsWithFavorites = await markFavoriteConcerts(highlightedConcerts, req.user?.id);
+
+    // 🔥 Ordenamos por el número de suscriptores de la banda
+    concertsWithFavorites.sort((a, b) => b.band.subscribers.length - a.band.subscribers.length);
+
+    // 🔹 Aplicamos el límite si hay uno
+    const finalConcerts = concertLimit > 0 ? concertsWithFavorites.slice(0, concertLimit) : concertsWithFavorites;
 
     return successResponse(res, 'Highlighted concerts retrieved successfully', finalConcerts);
   } catch (error) {

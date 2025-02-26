@@ -23,12 +23,12 @@ const router = Router();
 router.post('/', authRequired, checkBandStatus('approved'), validateSchema(concertSchema), upload.single('file'), createConcertController);
 router.get('/genres', getGenresController);
 router.get('/locations', getLocationsController);
-router.get('/recent', getUpcomingConcertsController);
-router.get('/most-popular', getMostPopularConcertsController);
-router.get('/top-rated', getTopRatedConcertsController);
+router.get('/recent', authRequired, getUpcomingConcertsController);
+router.get('/most-popular', authRequired, getMostPopularConcertsController);
+router.get('/top-rated', authRequired, getTopRatedConcertsController);
 router.delete('/:id', authRequired, checkBandStatus('approved'), checkOwnerShip, deleteConcertController);
 router.put('/:id', authRequired, checkBandStatus('approved'), checkOwnerShip, validateSchema(concertUpdateSchema), updateConcertController);
 router.get('/', authRequired, getAllConcertsController);
-router.get('/:id', getConcertByIdController);
+router.get('/:id', authRequired, getConcertByIdController);
 
 export default router;
