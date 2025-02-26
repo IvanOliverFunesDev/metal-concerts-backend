@@ -71,7 +71,8 @@ export const getFavoriteConcerts = async (req, res) => {
       date: concert.date,
       location: concert.location,
       image: concert.image,
-      band: concert.band // `band` ya tiene los campos filtrados (bandName, genre, image)
+      band: concert.band, // `band` ya tiene los campos filtrados (bandName, genre, image)
+      isFavorite: true
     }));
     return successResponse(res, 'List concerts successfully', {
       favoriteConcerts: formattedConcerts
