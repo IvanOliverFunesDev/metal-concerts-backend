@@ -104,9 +104,12 @@ export const loginController = async (req, res) => {
 
 export const logoutController = (req, res) => {
   res.cookie('token', '', {
+    httpOnly: true,
+    secure: true, // Solo en producción con HTTPS
+    sameSite: 'None', // Necesario si el frontend está en otro dominio
     expires: new Date(0)
   });
-  return successResponse(res, 'logout completed');
+  return successResponse(res, 'Logged out successfully');
 };
 
 export const sendResetCodeController = async (req, res) => {
