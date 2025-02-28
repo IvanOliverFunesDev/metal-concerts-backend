@@ -4,6 +4,7 @@ import Concert from '../../models/concerts.model.js';
 import User from '../../models/user.model.js';
 import { successResponse, errorResponse } from '../../utils/responseHelper.js';
 import { uploadImageToCloudinary, deleteImageFromCloudinary } from '../../services/cloudinary.service.js';
+import { markSubscribeBands } from '../../utils/concertsUtils.js';
 
 export const profileBandController = async (req, res) => {
   try {
@@ -56,17 +57,14 @@ export const getBandPublicProfileController = async (req, res) => {
         message: 'This concert has ended'
       }));
 
+    const formattedBand = await markSubscribeBands(band, req.user?.id);
     return successResponse(res, 'Band profile loaded successfully', {
-      id: band._id,
-      bandName: band.bandName,
-      genre: band.genre,
-      description: band.description,
-      image: band.image,
+      ...formattedBand,
       subscribersCount,
       upcomingConcerts,
+      pastConcerts,
       averageRating: band.averageRating,
       totalReviews: band.totalReviews,
-      pastConcerts
     });
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
@@ -88,16 +86,7 @@ export const getAllBandsController = async (req, res) => {
 
     const bands = await Band.find(filters).select('bandName genre description image subscribers averageRating totalReviews');
 
-    const formattedBands = bands.map(band => ({
-      id: band._id,
-      bandName: band.bandName,
-      genre: band.genre,
-      description: band.description,
-      image: band.image,
-      subscribersCount: band.subscribers ? band.subscribers.length : 0,
-      averageRating: band.averageRating,
-      totalReviews: band.totalReviews
-    }));
+    const formattedBands = await markSubscribeBands(bands, req.user?.id);
 
     return successResponse(res, 'All bands retrieved successfully', formattedBands);
   } catch (error) {
@@ -124,7 +113,6 @@ export const updateBandProfileController = async (req, res) => {
         await deleteImageFromCloudinary(band.image); // 🗑️ Borrar imagen anterior
       }
       const uploadResult = await uploadImageToCloudinary(req.file.path);
-      console.log('☁️ Subida a Cloudinary:', uploadResult);
 
       imageUrl = uploadResult.secure_url;
     }
@@ -136,7 +124,6 @@ export const updateBandProfileController = async (req, res) => {
     band.image = imageUrl; // 📌 Guardar la nueva imagen en la BD
 
     await band.save();
-    console.log('✅ Banda actualizada correctamente:', band);
 
     return successResponse(res, 'Band profile updated successfully', {
       band: {
@@ -168,20 +155,13 @@ export const getPopularBandsController = async (req, res) => {
     const limitedBands = bandLimit > 0 ? popularBands.slice(0, bandLimit) : popularBands;
 
     // Formateamos la respuesta
-    const formattedBands = limitedBands.map(band => ({
-      id: band._id,
-      bandName: band.bandName,
-      description: band.description,
-      genre: band.genre,
-      image: band.image,
-      subscribersCount: band.subscribers.length, // Contamos los suscriptores
-    }));
+    const formattedBands = await markSubscribeBands(limitedBands, req.user?.id);
 
     if (formattedBands.length === 0) {
       return errorResponse(res, 404, 'No bands found');
     }
 
-    return successResponse(res, 'Popular bands retrieved successfully', formattedBands);
+    return successResponse(res, 'All bands retrieved successfully', formattedBands);
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
@@ -203,20 +183,13 @@ export const getTopRatedBandsController = async (req, res) => {
     const limitedBands = bandLimit > 0 ? topRatedBands.slice(0, bandLimit) : topRatedBands;
 
     // Formateamos la respuesta
-    const formattedBands = limitedBands.map(band => ({
-      id: band._id,
-      bandName: band.bandName,
-      description: band.description,
-      genre: band.genre,
-      image: band.image,
-      averageRating: band.averageRating, // Contamos los suscriptores
-    }));
+    const formattedBands = await markSubscribeBands(limitedBands, req.user?.id);
 
     if (formattedBands.length === 0) {
       return errorResponse(res, 404, 'No bands found');
     }
 
-    return successResponse(res, 'Popular bands retrieved successfully', formattedBands);
+    return successResponse(res, 'All bands retrieved successfully', formattedBands);
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }

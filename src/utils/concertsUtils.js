@@ -26,3 +26,26 @@ export const markFavoriteConcerts = async (concerts, userId) => {
 
   return Array.isArray(concerts) ? formattedConcerts : formattedConcerts[0]; // Devolver lista o solo un objeto
 };
+
+export const markSubscribeBands = async (bands, userId) => {
+  let subscribedBandsSet = new Set();
+
+  if (userId) {
+    const user = await User.findById(userId).select('subscribedBands');
+    if (user) {
+      subscribedBandsSet = new Set(user.subscribedBands.map(sub => sub.toString()));
+    }
+  }
+
+  const bandsArray = Array.isArray(bands) ? bands : [bands];
+
+  const formattedBands = bandsArray.map(band => ({
+    id: band._id,
+    bandName: band.bandName,
+    genre: band.genre,
+    image: band.image,
+    averageRating: band.averageRating,
+    isSubscribed: subscribedBandsSet.has(band._id.toString()) // ✅ Verificamos si está suscrito
+  }));
+  return Array.isArray(bands) ? formattedBands : formattedBands[0]; // 🔥 Devuelve lista o un solo objeto
+};

@@ -7,6 +7,8 @@ import Review from './src/models/review.model.js';
 
 // import dotenv from 'dotenv';
 import config from './src/config.js';
+import { loggers } from 'winston';
+import logger from './src/utils/logger.js';
 
 // dotenv.config();
 
@@ -209,7 +211,7 @@ const generateRandomReview = () => {
 const generateData = async () => {
   try {
     await mongoose.connect(config.database.MONGO_URI);
-    console.log('✅ Conectado a MongoDB');
+    loggers.info('✅ Conectado a MongoDB');
 
     await User.deleteMany();
     await Band.deleteMany();
@@ -280,7 +282,7 @@ const generateData = async () => {
     }
     await Review.insertMany(reviewsData);
 
-    console.log('✅ Datos insertados correctamente');
+    logger.info('✅ Datos insertados correctamente');
     process.exit();
   } catch (error) {
     console.error('❌ Error insertando datos:', error);

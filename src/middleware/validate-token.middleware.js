@@ -17,11 +17,11 @@ export const authRequired = (req, res, next) => {
 
 export const authOptional = (req, res, next) => {
   const { token } = req.cookies;
-
   if (!token) {
     req.user = undefined;
     return next();
   }
+
   jwt.verify(token, JWT_SECRET, (err, decoded) => {
     if (err) {
       req.user = undefined;
