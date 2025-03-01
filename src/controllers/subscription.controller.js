@@ -50,8 +50,19 @@ export const unsubscribeFromBand = async (req, res) => {
 
 export const getUserSubscriptions = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).populate('subscribedBands', 'bandName image ');
-    return successResponse(res, 'User subscriptions retrieved successfully', user.subscribedBands);
+    const user = await User.findById(req.user.id)
+      .populate('subscribedBands', 'bandName image');  // Obtenemos las bandas suscritas
+
+    // Formateamos la respuesta para cambiar '_id' por 'id' en subscribedBands
+    const formattedBands = user.subscribedBands.map(band => {
+      return {
+        id: band._id,  // Renombramos '_id' a 'id'
+        bandName: band.bandName,
+        image: band.image
+      };
+    });
+
+    return successResponse(res, 'User subscriptions retrieved successfully', formattedBands);
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
