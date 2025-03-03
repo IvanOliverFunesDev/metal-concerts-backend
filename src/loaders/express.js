@@ -1,6 +1,5 @@
 import express from 'express';
 import morgan from 'morgan';
-import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import router from '../routes/index.routes.js';
 import logger from '../utils/logger.js';
@@ -17,7 +16,6 @@ export default function (app) {
   }));
 
   app.use(morgan('combined', { stream: logger.stream }));
-  app.use(cookieParser());
   app.use(express.json());
 
   app.use('/api/v1', router);

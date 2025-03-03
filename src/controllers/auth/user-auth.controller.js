@@ -27,13 +27,14 @@ export const registerUserController = async (req, res) => {
     const userSaved = await newUser.save();
     const token = await generateAccessToken({ id: userSaved._id, role: 'user' });
 
-    res.cookie('token', token);
     return successResponse(res, 'You have registered successfully', {
       id: userSaved._id,
       username: userSaved.username,
       email: userSaved.email,
       createdAt: userSaved.createdAt,
-      updatedAt: userSaved.updatedAt
+      updatedAt: userSaved.updatedAt,
+      // eslint-disable-next-line object-shorthand
+      token: token
     });
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);

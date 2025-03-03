@@ -11,7 +11,7 @@ import crypto from 'crypto';
 const JWT_SECRET = config.security.JWT_SECRET;
 
 export const verifyTokenController = async (req, res) => {
-  const { token } = req.cookies;
+  const token = req.headers['authorization']?.split(' ')[1];
 
   if (!token) return errorResponse(res, 401, 'Authentication token is missing');
 
@@ -80,14 +80,6 @@ export const loginController = async (req, res) => {
 
     const token = await generateAccessToken({ id: userFound._id, role, status });
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: true,  // 🔥 Obligatorio en Render porque usa HTTPS
-      sameSite: 'none',  // 🔥 Permite que la cookie se envíe desde un dominio diferente
-      path: '/',
-      maxAge: 24 * 60 * 60 * 1000
-    });
-
     return successResponse(res, 'Login successful', {
       id: userFound._id,
       role,
@@ -95,7 +87,9 @@ export const loginController = async (req, res) => {
       username: userFound.username || userFound.bandName,
       email: userFound.email,
       createdAt: userFound.createdAt,
-      updateAt: userFound.updateAt
+      updateAt: userFound.updateAt,
+      // eslint-disable-next-line object-shorthand
+      token: token
     });
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
@@ -103,12 +97,6 @@ export const loginController = async (req, res) => {
 };
 
 export const logoutController = (req, res) => {
-  res.cookie('token', '', {
-    httpOnly: true,
-    secure: true, // Solo en producción con HTTPS
-    sameSite: 'None', // Necesario si el frontend está en otro dominio
-    expires: new Date(0)
-  });
   return successResponse(res, 'Logged out successfully');
 };
 
