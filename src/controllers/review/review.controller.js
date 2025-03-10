@@ -93,8 +93,6 @@ export const getConcertReviewsController = async (req, res) => {
     const { concertId } = req.params;
 
     const reviews = await Review.find({ concert: concertId }).populate('user', 'username').select('rating comment createdAt');
-
-    res.status(200).json(reviews);
     return successResponse(res, 'Reviews retrieved successfully', reviews);
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);

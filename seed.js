@@ -5,12 +5,10 @@ import Band from './src/models/band.model.js';
 import Concert from './src/models/concerts.model.js';
 import Review from './src/models/review.model.js';
 
-// import dotenv from 'dotenv';
 import config from './src/config.js';
 import { loggers } from 'winston';
 import logger from './src/utils/logger.js';
 
-// dotenv.config();
 
 const locations = [
   'Madrid', 'Barcelona', 'Sevilla', 'Valencia', 'Bilbao', 'Granada', 'Málaga', 'Zaragoza',
@@ -41,7 +39,6 @@ const reviewMessages = [
   'El vocalista estuvo impresionante, una noche para recordar.'
 ];
 
-// 📌 **Aquí introduces las bandas manualmente**
 const bandsData = [
   { bandName: 'Metallica', genre: 'Heavy Metal', description: 'Banda icónica de heavy metal.', email: 'metallica@gmail.com', status: 'approved' },
   { bandName: 'Linkin Park', genre: 'Nu Metal', description: 'Banda revolucionaria del nu metal.', email: 'linkinpark@gmail.com', status: 'approved' },
@@ -89,7 +86,6 @@ const bandsData = [
   { bandName: 'Arctic Monkeys', genre: 'Indie Rock', description: 'Riffs pegajosos y actitud indie.', email: 'arcticmonkeys@gmail.com', status: 'approved' }
 ];
 
-// 📌 **Aquí introduces los usuarios manualmente**
 const usersData = [
   { username: 'alice', email: 'alice@gmail.com' },
   { username: 'bob', email: 'bob@gmail.com' },
@@ -203,7 +199,7 @@ const generateRandomDate = (isFuture) => {
 
 const generateRandomReview = () => {
   return {
-    rating: Math.floor(Math.random() * 5) + 1, // Valoración entre 1 y 5
+    rating: Math.floor(Math.random() * 5) + 1, 
     comment: reviewMessages[Math.floor(Math.random() * reviewMessages.length)]
   };
 };
@@ -218,19 +214,16 @@ const generateData = async () => {
     await Concert.deleteMany();
     await Review.deleteMany();
 
-    // Hashear passwords y crear bandas
     for (const band of bandsData) {
       band.password = await bcrypt.hash(band.bandName.toLowerCase() + '123', 10);
     }
     const createdBands = await Band.insertMany(bandsData);
 
-    // Crear usuarios
     const createdUsers = await User.insertMany(usersData.map(user => ({
       ...user,
       password: bcrypt.hashSync('123456', 10),
     })));
 
-    // Suscripciones Variadas
     for (const user of createdUsers) {
       const numSubscriptions = Math.floor(Math.random() * (bandsData.length - 1)) + 1;
       const randomBands = createdBands.sort(() => 0.5 - Math.random()).slice(0, numSubscriptions);
@@ -241,24 +234,22 @@ const generateData = async () => {
       randomBands.forEach(band => band.subscribers.push(user._id));
     }
 
-    // ✅ Guardamos todas las bandas solo una vez después de actualizar sus suscriptores
     await Promise.all(createdBands.map(band => band.save()));
 
-    // Crear conciertos
     const concertsData = [];
     for (const band of createdBands) {
       for (let i = 0; i < 3; i++) {
         concertsData.push({
           title: `Live in ${locations[i]} - ${band.bandName}`,
           description: `Un concierto espectacular de ${band.bandName}.`,
-          date: generateRandomDate(true), // Futuro
+          date: generateRandomDate(true), 
           location: locations[i],
           band: band._id
         });
         concertsData.push({
           title: `Past Tour - ${band.bandName}`,
           description: `Revive el increíble concierto de ${band.bandName}.`,
-          date: generateRandomDate(false), // Pasado
+          date: generateRandomDate(false), 
           location: locations[i + 3],
           band: band._id
         });
@@ -266,11 +257,10 @@ const generateData = async () => {
     }
     const createdConcerts = await Concert.insertMany(concertsData);
 
-    // Generar Reseñas en Conciertos Pasados
     const reviewsData = [];
     for (const user of createdUsers) {
-      const reviewedConcerts = createdConcerts.filter(c => c.date < new Date()); // Solo conciertos pasados
-      const numReviews = Math.floor(Math.random() * 3) + 1; // Cada usuario deja entre 1 y 3 reseñas
+      const reviewedConcerts = createdConcerts.filter(c => c.date < new Date()); // 
+      const numReviews = Math.floor(Math.random() * 3) + 1; 
 
       reviewedConcerts.sort(() => 0.5 - Math.random()).slice(0, numReviews).forEach(concert => {
         reviewsData.push({

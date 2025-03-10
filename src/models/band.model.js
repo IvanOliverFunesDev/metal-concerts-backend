@@ -26,7 +26,7 @@ const bandsSchema = new mongoose.Schema({
   genre: {
     type: String,
     required: true,
-    enum: GENRES, // 🔥 Solo permitirá valores de la lista
+    enum: GENRES, //  Solo permitirá valores de la lista
     trim: true,
   },
   image: {
