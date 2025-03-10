@@ -9,7 +9,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// 📌 Email de aprobación de banda
 export const sendApprovalEmail = async (email, bandName) => {
   const mailOptions = {
     from: `"Metal Souls" <${config.email.USER}>`,
@@ -32,7 +31,6 @@ export const sendApprovalEmail = async (email, bandName) => {
   }
 };
 
-// 📌 Email de rechazo de banda
 export const sendRejectionEmail = async (email, bandName) => {
   const mailOptions = {
     from: `"Metal Souls" <${config.email.USER}>`,
@@ -55,7 +53,6 @@ export const sendRejectionEmail = async (email, bandName) => {
   }
 };
 
-// 📌 Email para restablecimiento de contraseña
 export const sendResetCodeEmail = async (email, username, resetCode) => {
   const mailOptions = {
     from: `"Metal Souls" <${config.email.USER}>`,

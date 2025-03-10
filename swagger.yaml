@@ -9,6 +9,8 @@ openapi: 3.0.0
 paths:
   /admin/bands/pending:
     get:
+      tags:
+        - admin
       responses:
         '200':
           description: Lista de bandas pendientes obtenida correctamente
@@ -17,6 +19,8 @@ paths:
       summary: Obtener bandas pendientes de aprobación
   /admin/bands/{bandId}/approved:
     patch:
+      tags:
+        - admin
       parameters:
       - in: path
         name: bandId
@@ -31,6 +35,8 @@ paths:
       summary: Aprobar una banda
   /admin/create-admin:
     post:
+      tags:
+        - admin
       requestBody:
         content:
           application/json:
@@ -59,6 +65,8 @@ paths:
       summary: Crear un administrador
   /auth/login:
     post:
+      tags:
+        - auth
       requestBody:
         content:
           application/json:
@@ -85,12 +93,16 @@ paths:
       summary: Iniciar sesión
   /auth/logout:
     post:
+      tags:
+        - auth
       responses:
         '200':
           description: Sesión cerrada correctamente
       summary: Cerrar sesión
   /auth/register/band:
     post:
+      tags:
+        - auth
       requestBody:
         content:
           application/json:
@@ -127,6 +139,8 @@ paths:
       summary: Registrar una banda
   /auth/register/user:
     post:
+      tags:
+        - auth
       requestBody:
         content:
           application/json:
@@ -155,6 +169,8 @@ paths:
       summary: Registrar un usuario
   /bands:
     get:
+      tags:
+        - bands
       responses:
         '200':
           description: Lista de bandas obtenida correctamente
@@ -163,6 +179,8 @@ paths:
       summary: Obtener lista de bandas registradas
   /bands/update-profile:
     put:
+      tags:
+        - bands
       requestBody:
         content:
           application/json:
@@ -191,6 +209,8 @@ paths:
       summary: Actualizar perfil de banda
   /bands/{bandId}:
     get:
+      tags:
+        - bands
       parameters:
       - in: path
         name: bandId
@@ -205,6 +225,8 @@ paths:
       summary: Obtener perfil público de una banda
   /concerts:
     get:
+      tags:
+        - concerts
       responses:
         '200':
           description: Lista de conciertos obtenida correctamente
@@ -212,6 +234,8 @@ paths:
           description: Error en el servidor
       summary: Obtener lista de conciertos
     post:
+      tags:
+        - concerts
       requestBody:
         content:
           application/json:
@@ -236,6 +260,8 @@ paths:
       summary: Crear un nuevo concierto
   /concerts/{id}:
     delete:
+      tags:
+        - concerts
       parameters:
       - in: path
         name: id
@@ -249,6 +275,8 @@ paths:
           description: Concierto no encontrado
       summary: Eliminar un concierto
     put:
+      tags:
+        - concerts
       parameters:
       - in: path
         name: id
@@ -279,6 +307,8 @@ paths:
       summary: Actualizar información de un concierto
   /reviews/{concertId}:
     delete:
+      tags:
+        - reviews
       parameters:
       - in: path
         name: concertId
@@ -292,6 +322,8 @@ paths:
           description: Reseña no encontrada
       summary: Eliminar una reseña
     get:
+      tags:
+        - reviews
       parameters:
       - in: path
         name: concertId
@@ -305,6 +337,8 @@ paths:
           description: Concierto no encontrado
       summary: Obtener reseñas de un concierto
     post:
+      tags:
+        - reviews
       parameters:
       - in: path
         name: concertId
@@ -335,6 +369,8 @@ paths:
       summary: Crear una reseña para un concierto
   /subscriptions/subscribe/{bandId}:
     post:
+      tags:
+        - subscriptions
       parameters:
       - in: path
         name: bandId
@@ -349,6 +385,8 @@ paths:
       summary: Suscribirse a una banda
   /subscriptions/subscribers:
     get:
+      tags:
+        - subscriptions
       responses:
         '200':
           description: Lista de suscriptores obtenida correctamente
@@ -357,6 +395,8 @@ paths:
       summary: Obtener lista de suscriptores
   /subscriptions/subscriptions:
     get:
+      tags:
+        - subscriptions
       responses:
         '200':
           description: Lista de suscripciones obtenida correctamente
@@ -365,6 +405,8 @@ paths:
       summary: Obtener lista de suscripciones del usuario
   /subscriptions/unsubscribe/{subscriptionId}:
     delete:
+      tags:
+        - subscriptions
       parameters:
       - in: path
         name: subscriptionId

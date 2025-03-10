@@ -1,9 +1,8 @@
-import globals from 'globals';
 import pluginJs from '@eslint/js';
 import neostandard from 'neostandard';
 
 export default [
-  { languageOptions: { globals: globals.node } },
+  { languageOptions: { globals: globals.node, jest: true } },
   pluginJs.configs.recommended,
   ...neostandard({
     semi: ['error', 'always'],

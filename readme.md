@@ -148,9 +148,6 @@ Este proyecto está licenciado bajo la Licencia ISC.
  ┃ ┃ ┗ 📜band-approval.controller.js
  ┃ ┣ 📂auth
  ┃ ┃ ┣ 📜auth.controller.js
- ┃ ┃ ┣ 📜band-auth.controller.js
- ┃ ┃ ┣ 📜forgot-password.controller.js
- ┃ ┃ ┗ 📜user-auth.controller.js
  ┃ ┣ 📂bands
  ┃ ┃ ┗ 📜band.controller.js
  ┃ ┣ 📂concerts

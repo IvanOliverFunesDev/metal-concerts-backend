@@ -45,7 +45,7 @@ export const markSubscribeBands = async (bands, userId) => {
     genre: band.genre,
     image: band.image,
     averageRating: band.averageRating,
-    isSubscribed: subscribedBandsSet.has(band._id.toString()) // ✅ Verificamos si está suscrito
+    isSubscribed: subscribedBandsSet.has(band._id.toString()) // Verificamos si está suscrito
   }));
-  return Array.isArray(bands) ? formattedBands : formattedBands[0]; // 🔥 Devuelve lista o un solo objeto
+  return Array.isArray(bands) ? formattedBands : formattedBands[0]; // Devuelve lista o un solo objeto
 };

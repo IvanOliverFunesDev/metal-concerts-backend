@@ -86,8 +86,41 @@ export const loginController = async (req, res) => {
       status,
       username: userFound.username || userFound.bandName,
       email: userFound.email,
-      createdAt: userFound.createdAt,
-      updateAt: userFound.updateAt,
+      token: token
+    });
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
+};
+
+export const registerUserController = async (req, res) => {
+  const { email, password, username } = req.body;
+  try {
+    const userFound = await User.findOne({ email });
+    if (userFound) return errorResponse(res, 400, 'The email is already in use')
+
+    const bandFound = await Band.findOne({ email });
+    if (bandFound) return errorResponse(res, 400, 'The email is already in use')
+
+    const nameFound = await User.findOne({ username });
+    if (nameFound) return errorResponse(res, 400, 'The username is already in use');
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+      username,
+      email,
+      password: passwordHash
+    });
+    const userSaved = await newUser.save();
+    const token = await generateAccessToken({ id: userSaved._id, role: 'user' });
+
+    return successResponse(res, 'You have registered successfully', {
+      id: userSaved._id,
+      username: userSaved.username,
+      email: userSaved.email,
+      createdAt: userSaved.createdAt,
+      updatedAt: userSaved.updatedAt,
       // eslint-disable-next-line object-shorthand
       token: token
     });
@@ -96,8 +129,43 @@ export const loginController = async (req, res) => {
   }
 };
 
-export const logoutController = (req, res) => {
-  return successResponse(res, 'Logged out successfully');
+export const registerBandController = async (req, res) => {
+  const { email, password, bandName, genre, description } = req.body;
+  try {
+    const bandFound = await Band.findOne({ email });
+    if (bandFound) return errorResponse(res, 400, 'The email is already in use');
+
+    const userFound = await User.findOne({ email });
+    if (userFound) return errorResponse(res, 400, 'The email is already in use by a user');
+
+    const bandNameFound = await Band.findOne({ bandName });
+    if (bandNameFound) return errorResponse(res, 400, 'The band name is already in use');
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const newBand = new Band({
+      bandName,
+      email,
+      password: passwordHash,
+      genre,
+      description,
+      status: 'pending'
+    });
+    const bandSaved = await newBand.save();
+
+    return successResponse(res, 'Band registered successfully. Awaiting admin approval', {
+      id: bandSaved._id,
+      bandName: bandSaved.bandName,
+      email: bandSaved.email,
+      genre: bandSaved.genre,
+      description: bandSaved.description,
+      status: bandSaved.status,
+      createdAt: bandSaved.createdAt,
+      updatedAt: bandSaved.updatedAt
+    });
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
 };
 
 export const sendResetCodeController = async (req, res) => {
@@ -199,3 +267,4 @@ export const resetPasswordController = async (req, res) => {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
+

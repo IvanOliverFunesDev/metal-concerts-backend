@@ -51,12 +51,11 @@ export const unsubscribeFromBand = async (req, res) => {
 export const getUserSubscriptions = async (req, res) => {
   try {
     const user = await User.findById(req.user.id)
-      .populate('subscribedBands', 'bandName image');  // Obtenemos las bandas suscritas
+      .populate('subscribedBands', 'bandName image');  
 
-    // Formateamos la respuesta para cambiar '_id' por 'id' en subscribedBands
     const formattedBands = user.subscribedBands.map(band => {
       return {
-        id: band._id,  // Renombramos '_id' a 'id'
+        id: band._id,  
         bandName: band.bandName,
         image: band.image
       };

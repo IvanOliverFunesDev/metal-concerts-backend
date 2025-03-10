@@ -1,6 +1,5 @@
 import multer from 'multer';
 import path from 'path';
-// import { fileURLToPath } from 'url';
 
 // 📂 Definir almacenamiento en disco temporalmente
 const storage = multer.diskStorage({
