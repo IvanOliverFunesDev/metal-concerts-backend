@@ -71,6 +71,55 @@ export const getBandPublicProfileController = async (req, res) => {
   }
 };
 
+export const getOwnBandController = async (req, res) => {
+  try {
+    const bandId = req.user?.id;
+
+    if (!bandId) return res.status(401).json({ message: 'No autorizado' });
+
+    const band = await Band.findById(bandId);
+
+    if (!band) return res.status(404).json({ message: 'Band not found' });
+
+    const subscribersCount = band.subscribers ? band.subscribers.length : 0;
+
+    const allConcerts = await Concert.find({ band: bandId }).select('title date location');
+
+    const upcomingConcerts = allConcerts
+      .filter(concert => concert.date >= new Date())
+      .map(concert => ({
+        id: concert._id,
+        title: concert.title,
+        date: concert.date,
+        location: concert.location
+      }));
+
+    const pastConcerts = allConcerts
+      .filter(concert => concert.date < new Date())
+      .map(concert => ({
+        id: concert._id,
+        title: concert.title,
+        date: concert.date,
+        location: concert.location,
+        message: 'This concert has ended'
+      }));
+
+    const formattedBand = await markSubscribeBands(band, req.user.id);
+
+    return successResponse(res, 'Private band panel loaded successfully', {
+      ...formattedBand,
+      subscribersCount,
+      upcomingConcerts,
+      pastConcerts,
+      averageRating: band.averageRating,
+      totalReviews: band.totalReviews,
+    });
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
+};
+
+
 export const getAllBandsController = async (req, res) => {
   try {
     const { bandName, genre } = req.query;
