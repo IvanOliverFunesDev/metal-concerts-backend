@@ -74,6 +74,8 @@ export const getBandPublicProfileController = async (req, res) => {
 export const getOwnBandController = async (req, res) => {
   try {
     const bandId = req.user.id;
+    
+    console.log('🧠 req.user:', req.user);
 
     if (!bandId) return res.status(401).json({ message: 'No autorizado' });
 
