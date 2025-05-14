@@ -10,7 +10,7 @@ router.get('/', authOptional, getAllBandsController);
 router.get('/popular', authOptional, getPopularBandsController);
 router.get('/top-rated', authOptional, getTopRatedBandsController);
 router.get('/:id', authOptional, getBandPublicProfileController);
-router.get('/me', authMiddleware, getOwnBandController);
+router.get('/me', authRequired, getOwnBandController);
 router.put('/update-profile', authRequired, checkBandStatus('approved'), upload.single('file'), updateBandProfileController);
 
 export default router;
