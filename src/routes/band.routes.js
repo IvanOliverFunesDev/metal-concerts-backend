@@ -9,8 +9,8 @@ const router = Router();
 router.get('/', authOptional, getAllBandsController);
 router.get('/popular', authOptional, getPopularBandsController);
 router.get('/top-rated', authOptional, getTopRatedBandsController);
-router.get('/:id', authOptional, getBandPublicProfileController);
 router.get('/me', authRequired, getOwnBandController);
+router.get('/:id', authOptional, getBandPublicProfileController);
 router.put('/update-profile', authRequired, checkBandStatus('approved'), upload.single('file'), updateBandProfileController);
 
 export default router;
