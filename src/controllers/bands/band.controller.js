@@ -73,7 +73,7 @@ export const getBandPublicProfileController = async (req, res) => {
 
 export const getOwnBandController = async (req, res) => {
   try {
-    const bandId = req.user?.id;
+    const bandId = req.user.id;
 
     if (!bandId) return res.status(401).json({ message: 'No autorizado' });
 
@@ -115,6 +115,7 @@ export const getOwnBandController = async (req, res) => {
       totalReviews: band.totalReviews,
     });
   } catch (error) {
+    console.error('❌ Error en getOwnBandController:', error);
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
