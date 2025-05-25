@@ -74,7 +74,7 @@ export const getBandPublicProfileController = async (req, res) => {
 export const getOwnBandController = async (req, res) => {
   try {
     const bandId = req.user.id;
-    
+
     console.log('🧠 req.user:', req.user);
 
     if (!bandId) return res.status(401).json({ message: 'No autorizado' });
@@ -122,7 +122,6 @@ export const getOwnBandController = async (req, res) => {
   }
 };
 
-
 export const getAllBandsController = async (req, res) => {
   try {
     const { bandName, genre } = req.query;
@@ -141,51 +140,6 @@ export const getAllBandsController = async (req, res) => {
     const formattedBands = await markSubscribeBands(bands, req.user?.id);
 
     return successResponse(res, 'All bands retrieved successfully', formattedBands);
-  } catch (error) {
-    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
-  }
-};
-
-export const updateBandProfileController = async (req, res) => {
-  try {
-    const bandId = req.user.id;
-    const { bandName, genre, description } = req.body;
-    const band = await Band.findById(bandId);
-
-    if (!band) {
-      return errorResponse(res, 404, 'Band not found');
-    }
-    // 🔥 Si hay una nueva imagen en la request
-    let imageUrl = band.image;
-    if (req.file) {
-      console.log('🖼 Recibida imagen:', req.file);
-      if (band.image) {
-        console.log('🗑 Borrando imagen anterior de Cloudinary:', band.image);
-
-        await deleteImageFromCloudinary(band.image); // 🗑️ Borrar imagen anterior
-      }
-      const uploadResult = await uploadImageToCloudinary(req.file.path);
-
-      imageUrl = uploadResult.secure_url;
-    }
-
-    // 🔹 Actualizar datos de la banda
-    band.bandName = bandName || band.bandName;
-    band.genre = genre || band.genre;
-    band.description = description || band.description;
-    band.image = imageUrl; // 📌 Guardar la nueva imagen en la BD
-
-    await band.save();
-
-    return successResponse(res, 'Band profile updated successfully', {
-      band: {
-        id: band._id,
-        bandName: band.bandName,
-        genre: band.genre,
-        description: band.description,
-        image: band.image
-      }
-    });
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
@@ -242,6 +196,125 @@ export const getTopRatedBandsController = async (req, res) => {
     }
 
     return successResponse(res, 'All bands retrieved successfully', formattedBands);
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
+};
+
+export const updateBandProfileController = async (req, res) => {
+  try {
+    const bandId = req.user.id;
+    const { bandName, genre, description } = req.body;
+    const band = await Band.findById(bandId);
+
+    if (!band) {
+      return errorResponse(res, 404, 'Band not found');
+    }
+    // 🔥 Si hay una nueva imagen en la request
+    let imageUrl = band.image;
+    if (req.file) {
+      console.log('🖼 Recibida imagen:', req.file);
+      if (band.image) {
+        console.log('🗑 Borrando imagen anterior de Cloudinary:', band.image);
+
+        await deleteImageFromCloudinary(band.image); // 🗑️ Borrar imagen anterior
+      }
+      const uploadResult = await uploadImageToCloudinary(req.file.path);
+
+      imageUrl = uploadResult.secure_url;
+    }
+
+    // 🔹 Actualizar datos de la banda
+    band.bandName = bandName || band.bandName;
+    band.genre = genre || band.genre;
+    band.description = description || band.description;
+    band.image = imageUrl; // 📌 Guardar la nueva imagen en la BD
+
+    await band.save();
+
+    return successResponse(res, 'Band profile updated successfully', {
+      band: {
+        id: band._id,
+        bandName: band.bandName,
+        genre: band.genre,
+        description: band.description,
+        image: band.image
+      }
+    });
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
+};
+
+export const updateBandNameController = async (req, res) => {
+  try {
+    const bandId = req.user.id;
+    const { bandName } = req.body;
+
+    const band = await Band.findById(bandId);
+    if (!band) return errorResponse(res, 404, 'Band not found');
+
+    band.bandName = bandName || band.bandName;
+    await band.save();
+
+    return successResponse(res, 'Band name updated successfully', { bandName: band.bandName });
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
+};
+
+export const updateDescriptionController = async (req, res) => {
+  try {
+    const bandId = req.user.id;
+    const { description } = req.body;
+
+    const band = await Band.findById(bandId);
+    if (!band) return errorResponse(res, 404, 'Band not found');
+
+    band.description = description || band.description;
+    await band.save();
+
+    return successResponse(res, 'Description updated successfully', { description: band.description });
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
+};
+
+export const updateGenreController = async (req, res) => {
+  try {
+    const bandId = req.user.id;
+    const { genre } = req.body;
+
+    const band = await Band.findById(bandId);
+    if (!band) return errorResponse(res, 404, 'Band not found');
+
+    band.genre = genre || band.genre;
+    await band.save();
+
+    return successResponse(res, 'Genre updated successfully', { genre: band.genre });
+  } catch (error) {
+    return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
+  }
+};
+
+export const updateImageController = async (req, res) => {
+  try {
+    const bandId = req.user.id;
+    const band = await Band.findById(bandId);
+    if (!band) return errorResponse(res, 404, 'Band not found');
+
+    if (req.file) {
+      if (band.image) {
+        await deleteImageFromCloudinary(band.image);
+      }
+      const uploadResult = await uploadImageToCloudinary(req.file.path);
+      band.image = uploadResult.secure_url;
+      await band.save();
+
+      return successResponse(res, 'Image updated successfully', { image: band.image });
+    } else {
+      return errorResponse(res, 400, 'No image provided');
+    }
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
