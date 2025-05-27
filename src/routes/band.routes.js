@@ -15,5 +15,5 @@ router.put('/update-profile', authRequired, checkBandStatus('approved'), upload.
 router.patch('/me/band-name', authRequired, updateBandNameController);
 router.patch('/me/genre', authRequired, updateGenreController);
 router.patch('/me/description', authRequired, updateDescriptionController);
-router.patch('/me/image', authRequired, updateImageController);
+router.patch('/me/image', authRequired, uploadMiddleware.single('image'), updateBandImageController);
 export default router;
