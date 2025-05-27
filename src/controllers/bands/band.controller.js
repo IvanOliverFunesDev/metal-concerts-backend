@@ -297,25 +297,37 @@ export const updateGenreController = async (req, res) => {
   }
 };
 
-export const updateImageController = async (req, res) => {
+export const updateBandImageController = async (req, res) => {
   try {
     const bandId = req.user.id;
     const band = await Band.findById(bandId);
-    if (!band) return errorResponse(res, 404, 'Band not found');
 
-    if (req.file) {
-      if (band.image) {
-        await deleteImageFromCloudinary(band.image);
-      }
-      const uploadResult = await uploadImageToCloudinary(req.file.path);
-      band.image = uploadResult.secure_url;
-      await band.save();
-
-      return successResponse(res, 'Image updated successfully', { image: band.image });
-    } else {
-      return errorResponse(res, 400, 'No image provided');
+    if (!band) {
+      return errorResponse(res, 404, 'Band not found');
     }
+
+    if (!req.file) {
+      return errorResponse(res, 400, 'No image file provided');
+    }
+
+    console.log('🖼 Recibida nueva imagen:', req.file);
+
+    if (band.image) {
+      console.log('🗑 Borrando imagen anterior:', band.image);
+      await deleteImageFromCloudinary(band.image);
+    }
+
+    const uploadResult = await uploadImageToCloudinary(req.file.path);
+    band.image = uploadResult.secure_url;
+
+    await band.save();
+
+    return successResponse(res, 'Band image updated successfully', {
+      image: band.image
+    });
+
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
+
