@@ -20,7 +20,7 @@ import {
 
 const router = Router();
 
-router.post('/', authRequired, checkBandStatus('approved'), validateSchema(concertSchema), upload.single('file'), createConcertController);
+router.post('/', authRequired, checkBandStatus('approved'), upload.single('file'), validateSchema(concertSchema), createConcertController);
 router.get('/genres', getGenresController);
 router.get('/locations', getLocationsController);
 router.get('/recent', authOptional, getUpcomingConcertsController);
