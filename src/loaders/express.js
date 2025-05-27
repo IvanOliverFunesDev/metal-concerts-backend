@@ -7,14 +7,14 @@ import { loggerMiddleware } from '../middleware/logger.middleware.js';
 import { errorHandlingMiddleware } from '../middleware/error-handling.middleware.js';
 
 export default function (app) {
-  app.use(loggerMiddleware);
   app.use(cors({
     origin: ['http://localhost:4200', 'https://metal-concerts-frontend-prueba2-tau.vercel.app'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: false 
   }));
-
+  
+  app.use(loggerMiddleware);
   app.use(morgan('combined', { stream: logger.stream }));
   app.use(express.json());
 
