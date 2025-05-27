@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { checkBandStatus } from '../middleware/check-role.middleware.js';
 import { authOptional, authRequired } from '../middleware/validate-token.middleware.js';
 import { upload } from '../middleware/upload.middleware.js';
-import { getAllBandsController, getBandPublicProfileController, getPopularBandsController, getOwnBandController, getTopRatedBandsController, updateBandProfileController, updateDescriptionController, updateImageController, updateGenreController, updateBandNameController } from '../controllers/bands/band.controller.js';
+import { getAllBandsController, getBandPublicProfileController, getPopularBandsController, getOwnBandController, getTopRatedBandsController, updateBandProfileController, updateDescriptionController, updateBandImageController, updateGenreController, updateBandNameController } from '../controllers/bands/band.controller.js';
 
 const router = Router();
 
