@@ -11,7 +11,7 @@ export default function (app) {
   app.use(cors({
     origin: ['http://localhost:4200', 'https://metal-concerts-frontend-prueba2-tau.vercel.app'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS]
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS']
   }));
 
   app.use(morgan('combined', { stream: logger.stream }));
