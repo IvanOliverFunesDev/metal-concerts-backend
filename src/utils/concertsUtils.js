@@ -42,6 +42,7 @@ export const markSubscribeBands = async (bands, userId) => {
   const formattedBands = bandsArray.map(band => ({
     id: band._id,
     bandName: band.bandName,
+    description: band.description,
     genre: band.genre,
     image: band.image,
     averageRating: band.averageRating,
