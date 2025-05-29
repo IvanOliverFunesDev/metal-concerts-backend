@@ -165,7 +165,7 @@ export const createConcertController = async (req, res) => {
 
 export const updateConcertController = async (req, res) => {
   try {
-    const updateConcert = await Concert.findByIdAndUpdate(req.params.id, req.body);
+    const updateConcert = await Concert.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updateConcert) return res.json({ message: 'Concert not found' });
     return successResponse(res, 'Successfully updated concert', updateConcert);
   } catch (error) {
