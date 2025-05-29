@@ -27,7 +27,7 @@ router.get('/recent', authOptional, getUpcomingConcertsController);
 router.get('/most-popular', authOptional, getMostPopularConcertsController);
 router.get('/top-rated', authOptional, getTopRatedConcertsController);
 router.delete('/:id', authRequired, checkBandStatus('approved'), checkOwnerShip, deleteConcertController);
-router.put('/:id', authRequired, checkBandStatus('approved'), checkOwnerShip, validateSchema(concertUpdateSchema), updateConcertController);
+router.put('/:id', authRequired, checkBandStatus('approved'), upload.single('file'), checkOwnerShip, validateSchema(concertUpdateSchema), updateConcertController);
 router.get('/', authOptional, getAllConcertsController);
 router.get('/:id', authOptional, getConcertByIdController);
 
