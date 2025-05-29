@@ -3,7 +3,7 @@ import Band from '../../models/band.model.js';
 import { errorResponse, successResponse } from '../../utils/responseHelper.js';
 import { GENRES } from '../../constants/genres.js';
 import { LOCATIONS } from '../../constants/locations.js';
-import { uploadImageToCloudinary } from '../../services/cloudinary.service.js';
+import { uploadImageToCloudinary, deleteImageFromCloudinary } from '../../services/cloudinary.service.js';
 import { markFavoriteConcerts } from '../../utils/concertsUtils.js';
 
 // 🎵 CONCERT CONTROLLERS
@@ -165,9 +165,36 @@ export const createConcertController = async (req, res) => {
 
 export const updateConcertController = async (req, res) => {
   try {
-    const updateConcert = await Concert.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updateConcert) return res.json({ message: 'Concert not found' });
-    return successResponse(res, 'Successfully updated concert', updateConcert);
+    const concertId = req.params.id;
+    const concert = await Concert.findById(concertId);
+
+    if (!concert) {
+      return errorResponse(res, 404, 'Concert not found');
+    }
+
+    // 📷 Si se recibe una nueva imagen
+    if (req.file) {
+      console.log('🖼 Nueva imagen recibida:', req.file.path);
+
+      // 🗑 Si hay una imagen anterior, la borramos
+      if (concert.image) {
+        console.log('🗑 Borrando imagen anterior:', concert.image);
+        await deleteImageFromCloudinary(concert.image);
+      }
+
+      // ⬆️ Subimos la nueva imagen
+      const uploadResult = await uploadImageToCloudinary(req.file.path);
+      concert.image = uploadResult.secure_url;
+    }
+
+    // 🔁 Actualizamos cualquier otro campo que venga en el body (menos la imagen)
+    Object.keys(req.body).forEach((key) => {
+      concert[key] = req.body[key];
+    });
+
+    await concert.save();
+
+    return successResponse(res, 'Concert updated successfully', concert);
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
