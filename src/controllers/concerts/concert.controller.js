@@ -170,7 +170,7 @@ export const createConcertController = async (req, res) => {
         '🎤 Nuevo concierto publicado',
         `
           <h2>🎶 ¡Nuevo concierto disponible!</h2>
-          <p>La banda <strong>${band.name}</strong> ha publicado un nuevo concierto:</p>
+          <p>La banda <strong>${band.bandName}</strong> ha publicado un nuevo concierto:</p>
           <ul>
             <li><b>Título:</b> ${title}</li>
             <li><b>Fecha:</b> ${new Date(date).toLocaleDateString()}</li>
@@ -197,27 +197,42 @@ export const updateConcertController = async (req, res) => {
       return errorResponse(res, 404, 'Concert not found');
     }
 
-    // 📷 Si se recibe una nueva imagen
     if (req.file) {
       console.log('🖼 Nueva imagen recibida:', req.file.path);
 
-      // 🗑 Si hay una imagen anterior, la borramos
       if (concert.image) {
         console.log('🗑 Borrando imagen anterior:', concert.image);
         await deleteImageFromCloudinary(concert.image);
       }
 
-      // ⬆️ Subimos la nueva imagen
       const uploadResult = await uploadImageToCloudinary(req.file.path);
       concert.image = uploadResult.secure_url;
     }
 
-    // 🔁 Actualizamos cualquier otro campo que venga en el body (menos la imagen)
     Object.keys(req.body).forEach((key) => {
       concert[key] = req.body[key];
     });
 
     await concert.save();
+
+    // 🔔 Notificar a suscriptores del cambio
+    const band = await Band.findById(concert.band);
+    if (band) {
+      await notifySubscribers(
+        band,
+        '✏️ Concierto actualizado',
+        `
+          <h2>🎵 Concierto actualizado</h2>
+          <p>La banda <strong>${band.bandName}</strong> ha actualizado uno de sus conciertos:</p>
+          <ul>
+            <li><b>Título:</b> ${concert.title}</li>
+            <li><b>Fecha:</b> ${new Date(concert.date).toLocaleDateString()}</li>
+            <li><b>Lugar:</b> ${concert.location}</li>
+          </ul>
+          <p>¡Mantente al tanto de los cambios!</p>
+        `
+      );
+    }
 
     return successResponse(res, 'Concert updated successfully', concert);
   } catch (error) {
@@ -225,15 +240,37 @@ export const updateConcertController = async (req, res) => {
   }
 };
 
+
 export const deleteConcertController = async (req, res) => {
   try {
     const deleteConcert = await Concert.findByIdAndDelete(req.params.id);
     if (!deleteConcert) return res.json({ message: 'Concert not found' });
+
+    // 🔔 Notificar a suscriptores
+    const band = await Band.findById(deleteConcert.band);
+    if (band) {
+      await notifySubscribers(
+        band,
+        '❌ Concierto cancelado',
+        `
+          <h2>⚠️ Concierto cancelado</h2>
+          <p>La banda <strong>${band.bandName}</strong> ha cancelado uno de sus conciertos:</p>
+          <ul>
+            <li><b>Título:</b> ${deleteConcert.title}</li>
+            <li><b>Fecha:</b> ${new Date(deleteConcert.date).toLocaleDateString()}</li>
+            <li><b>Lugar:</b> ${deleteConcert.location}</li>
+          </ul>
+          <p>Lamentamos los inconvenientes.</p>
+        `
+      );
+    }
+
     return successResponse(res, 'Concert deleted successfully');
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
+
 
 // 📅 UPCOMING & POPULAR CONCERTS
 export const getUpcomingConcertsController = async (req, res) => {
