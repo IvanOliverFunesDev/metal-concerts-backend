@@ -176,7 +176,6 @@ export const createConcertController = async (req, res) => {
             <li><b>Fecha:</b> ${new Date(date).toLocaleDateString()}</li>
             <li><b>Lugar:</b> ${location}</li>
           </ul>
-          <p><a href="${config.app.FRONTEND_URL}/concert/${savedConcert._id}" style="color: #3f51b5;">Ver concierto</a></p>
           <p>¡No te lo pierdas!</p>
         `
       );
