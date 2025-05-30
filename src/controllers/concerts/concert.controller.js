@@ -144,10 +144,12 @@ export const createConcertController = async (req, res) => {
   try {
     const { title, description, date, location } = req.body;
     let imageUrl = '';
+
     if (req.file) {
       const uploadResult = await uploadImageToCloudinary(req.file.path);
       imageUrl = uploadResult.secure_url;
     }
+
     const newConcert = new Concert({
       title,
       description,
@@ -156,12 +158,35 @@ export const createConcertController = async (req, res) => {
       image: imageUrl,
       band: req.user.id
     });
+
     const savedConcert = await newConcert.save();
+
+    // 🔔 Notificar a suscriptores
+    const band = await Band.findById(req.user.id);
+    if (band) {
+      await notifySubscribers(
+        band,
+        '🎤 Nuevo concierto publicado',
+        `
+          <h2>🎶 ¡Nuevo concierto disponible!</h2>
+          <p>La banda <strong>${band.name}</strong> ha publicado un nuevo concierto:</p>
+          <ul>
+            <li><b>Título:</b> ${title}</li>
+            <li><b>Fecha:</b> ${new Date(date).toLocaleDateString()}</li>
+            <li><b>Lugar:</b> ${location}</li>
+          </ul>
+          <p><a href="${config.app.FRONTEND_URL}/concert/${savedConcert._id}" style="color: #3f51b5;">Ver concierto</a></p>
+          <p>¡No te lo pierdas!</p>
+        `
+      );
+    }
+
     return successResponse(res, 'Successfully created concert', savedConcert);
   } catch (error) {
     return errorResponse(res, 500, 'Internal Server Error', [{ message: error.message }]);
   }
 };
+
 
 export const updateConcertController = async (req, res) => {
   try {

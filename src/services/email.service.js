@@ -77,3 +77,19 @@ export const sendResetCodeEmail = async (email, username, resetCode) => {
     console.error(`❌ Error sending password reset email: ${error.message}`);
   }
 };
+
+export const sendConcertNotificationEmail = async (email, subject, htmlContent) => {
+  const mailOptions = {
+    from: `"Metal Souls" <${config.email.USER}>`,
+    to: email,
+    subject,
+    html: htmlContent,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`📩 Notificación enviada a ${email}`);
+  } catch (error) {
+    console.error(`❌ Error enviando notificación: ${error.message}`);
+  }
+};
