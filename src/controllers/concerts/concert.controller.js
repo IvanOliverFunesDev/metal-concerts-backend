@@ -5,6 +5,7 @@ import { GENRES } from '../../constants/genres.js';
 import { LOCATIONS } from '../../constants/locations.js';
 import { uploadImageToCloudinary, deleteImageFromCloudinary } from '../../services/cloudinary.service.js';
 import { markFavoriteConcerts } from '../../utils/concertsUtils.js';
+import { notifySubscribers } from '../../utils/notifySubscribers.js';
 
 // 🎵 CONCERT CONTROLLERS
 export const getAllConcertsController = async (req, res) => {
