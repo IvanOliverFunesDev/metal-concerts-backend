@@ -28,7 +28,7 @@ export const rejectBandController = async (req, res) => {
     if (!band) return errorResponse(res, 404, 'Band not found');
     if (band.status !== 'pending') return errorResponse(res, 400, 'Band is already approved or rejected');
 
-    band.status = 'rejected';
+    band.status = 'reject';
     await band.save();
     await sendRejectionEmail(band.email, band.bandName);
 
