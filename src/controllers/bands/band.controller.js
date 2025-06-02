@@ -92,6 +92,7 @@ export const getOwnBandController = async (req, res) => {
       .map(concert => ({
         id: concert._id,
         title: concert.title,
+        description: concert.description,
         date: concert.date,
         location: concert.location,
         image: concert.image
@@ -102,6 +103,7 @@ export const getOwnBandController = async (req, res) => {
       .map(concert => ({
         id: concert._id,
         title: concert.title,
+        description: concert.description,
         date: concert.date,
         location: concert.location,
         message: 'This concert has ended'
