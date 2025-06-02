@@ -85,7 +85,7 @@ export const getOwnBandController = async (req, res) => {
 
     const subscribersCount = band.subscribers ? band.subscribers.length : 0;
 
-    const allConcerts = await Concert.find({ band: bandId }).select('title date location image');
+    const allConcerts = await Concert.find({ band: bandId }).select('title date description location image');
 
     const upcomingConcerts = allConcerts
       .filter(concert => concert.date >= new Date())
