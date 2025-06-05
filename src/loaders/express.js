@@ -8,12 +8,12 @@ import { errorHandlingMiddleware } from '../middleware/error-handling.middleware
 
 export default function (app) {
   app.use(cors({
-    origin: ['http://localhost:4200', 'https://metal-concerts-frontend-prueba2-tau.vercel.app'],
+    origin: ['http://localhost:4200', 'https://metal-concerts-frontend-tau.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: false 
+    credentials: false
   }));
-  
+
   app.use(loggerMiddleware);
   app.use(morgan('combined', { stream: logger.stream }));
   app.use(express.json());
