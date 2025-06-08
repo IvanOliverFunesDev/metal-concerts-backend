@@ -207,3 +207,1493 @@ Este proyecto está licenciado bajo la Licencia ISC.
  ┣ 📜config.js
  ┗ 📜index.js
  ```
+## 📂 Coleccion Postman
+{
+	"info": {
+		"_postman_id": "fd4e20b7-cda4-4d82-bc8c-fb2045d23c9f",
+		"name": "TFG",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44530605"
+	},
+	"item": [
+		{
+			"name": "AUTH",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@gmail.com\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Band",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"testbands@gmail.com\",\n    \"bandName\": \"testbands\",\n    \"description\":\"testbandtestbandtestbandtestband\",\n    \"genre\": \"Nu Metal\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/register/band",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"register",
+								"band"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@gmail.com\",\n    \"username\": \"test\",\n    \"description\":\"testtesttest\",\n    \"genre\": \"Nu Metal\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/register/user",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"register",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Profile Band",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{url}}/auth/profile/band",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"profile",
+								"band"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Profile User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenUser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{url}}/auth/profile/user",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"profile",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"test@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/forgot-password",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Reset Code",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"test@gmail.com\",\n    \"code\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth//verify-reset-code",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"",
+								"verify-reset-code"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"email\":\"test@gmail.com\",\n    \"code\": \"\",\n    \"newPassword\":\"test@gmail.com\",\n    \"confirmPassword\":\"test@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/reset-password",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"reset-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ADMIN",
+			"item": [
+				{
+					"name": "Approved Band",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MWJhMjU4YTk4YzQwMTMxNWQ5NjE2NSIsInJvbGUiOiJhZG1pbiIsInN0YXR1cyI6Ik4vQSIsImlhdCI6MTc0Njk2MTY0OCwiZXhwIjoxNzQ3MDQ4MDQ4fQ.ZEOWIWoj5PR07ZpX-FAXiSUEK6vgpZvrMQy6Uugqnmw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MWJhMjU4YTk4YzQwMTMxNWQ5NjE2NSIsInJvbGUiOiJhZG1pbiIsInN0YXR1cyI6Ik4vQSIsImlhdCI6MTc0NjY0MTUwNCwiZXhwIjoxNzQ2NzI3OTA0fQ.7i8Njgz7_GkWkfXcwp4acdAybT92ScuhP_pIXYL7yI",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{url}}/admin/bands/67b383ab4c92a53f27dbadab/approved",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"bands",
+								"67b383ab4c92a53f27dbadab",
+								"approved"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Band",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MWJhMjU4YTk4YzQwMTMxNWQ5NjE2NSIsInJvbGUiOiJhZG1pbiIsInN0YXR1cyI6Ik4vQSIsImlhdCI6MTc0Njk2MTY0OCwiZXhwIjoxNzQ3MDQ4MDQ4fQ.ZEOWIWoj5PR07ZpX-FAXiSUEK6vgpZvrMQy6Uugqnmw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MWJhMjU4YTk4YzQwMTMxNWQ5NjE2NSIsInJvbGUiOiJhZG1pbiIsInN0YXR1cyI6Ik4vQSIsImlhdCI6MTc0NjY0MTUwNCwiZXhwIjoxNzQ2NzI3OTA0fQ.7i8Njgz7_GkWkfXcwp4acdAybT92ScuhP_pIXYL7yI",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{url}}/admin/bands/67b383ab4c92a53f27dbadab/reject",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"bands",
+								"67b383ab4c92a53f27dbadab",
+								"reject"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "See Pending Bands",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenAdmin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MWJhMjU4YTk4YzQwMTMxNWQ5NjE2NSIsInJvbGUiOiJhZG1pbiIsInN0YXR1cyI6Ik4vQSIsImlhdCI6MTc0NjY0MTUwNCwiZXhwIjoxNzQ2NzI3OTA0fQ.7i8Njgz7_GkWkfXcwp4acdAybT92ScuhP_pIXYL7yI",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/admin/bands/pending",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"admin",
+								"bands",
+								"pending"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "BAND",
+			"item": [
+				{
+					"name": "Me",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{url}}/bands/me",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"bands",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Band Popular",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/bands/popular",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"bands",
+								"popular"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Top Rated",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MjA4NGRkNTMxMDQwYTg2NDVjYzE4YiIsInJvbGUiOiJiYW5kIiwic3RhdHVzIjoiYXBwcm92ZWQiLCJpYXQiOjE3NDg4ODc1NTUsImV4cCI6MTc0ODk3Mzk1NX0.86QMfGG01Zo4ftPkPOCq2KnRmcIKKoveZnEmJcT-7UM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "otrapruebademierda",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/bands/top-rated",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"bands",
+								"top-rated"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Band Id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MjA4NGRkNTMxMDQwYTg2NDVjYzE4YiIsInJvbGUiOiJiYW5kIiwic3RhdHVzIjoiYXBwcm92ZWQiLCJpYXQiOjE3NDg4ODc1NTUsImV4cCI6MTc0ODk3Mzk1NX0.86QMfGG01Zo4ftPkPOCq2KnRmcIKKoveZnEmJcT-7UM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								},
+								{
+									"key": "title",
+									"value": "otrapruebademierda",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/bands/682084dd531040a8645cc18b",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"bands",
+								"682084dd531040a8645cc18b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Image",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/home/ivanoliverfunes/Imágenes/Capturas de pantalla/Captura desde 2025-06-07 20-31-10.png"
+								},
+								{
+									"key": "",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/bands/me/image",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"bands",
+								"me",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Genre",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"genre\": \"Heavy Metal\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/bands/me/genre",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"bands",
+								"me",
+								"genre"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Band Name",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"bandName\": \"Heavy Metal\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/bands/me/band-name",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"bands",
+								"me",
+								"band-name"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Description",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Heavy Metal\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/bands/me/description",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"bands",
+								"me",
+								"description"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CONCERTS",
+			"item": [
+				{
+					"name": "See Concerts",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"genre\": \"Heavy Metal\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/concerts/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concerts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "See Concerts Id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"genre\": \"Heavy Metal\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/concerts/683de6984f7d8567e25da21a",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concerts",
+								"683de6984f7d8567e25da21a"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "See Recent Concerts",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"genre\": \"Heavy Metal\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/concerts/recent",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concerts",
+								"recent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "See Popular Concerts",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"genre\": \"Heavy Metal\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/concerts/most-popular",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concerts",
+								"most-popular"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "See Top Rated Concerts",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"genre\": \"Heavy Metal\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/concerts/top-rated",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concerts",
+								"top-rated"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "See Genres",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"genre\": \"Heavy Metal\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/concerts/genres",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concerts",
+								"genres"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "See Locations",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"genre\": \"Heavy Metal\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/concerts/locations",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concerts",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Concert",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/concerts/68360b7ade24cb79c6b56ac1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concerts",
+								"68360b7ade24cb79c6b56ac1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Concerts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/home/ivanoliverfunes/Imágenes/Capturas de pantalla/Captura desde 2025-05-25 12-26-48.png"
+								},
+								{
+									"key": "title",
+									"value": "prueba 2",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "daskjdnbasjkhdbnaskhjibnsahkijbnsaldkbnsadkbanskdl",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "2025-12-12",
+									"type": "text"
+								},
+								{
+									"key": "location",
+									"value": "Sevilla",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/concerts",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concerts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Concerts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/concerts/68360b7ade24cb79c6b56ac1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"concerts",
+								"68360b7ade24cb79c6b56ac1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "REVIEWS",
+			"item": [
+				{
+					"name": "See Reviews",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/reviews/6836076223bf0feb29306087",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"reviews",
+								"6836076223bf0feb29306087"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Reviews",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenUser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rating\": 4,\n    \"comment\":\"hola\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/reviews/6836076223bf0feb29306087",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"reviews",
+								"6836076223bf0feb29306087"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Reviews",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenUser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rating\": 4,\n    \"comment\":\"hola\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/reviews/6836076223bf0feb29306087",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"reviews",
+								"6836076223bf0feb29306087"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenUser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rating\": 5,\n    \"comment\":\"hola\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/reviews/6836076223bf0feb29306087",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"reviews",
+								"6836076223bf0feb29306087"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SUBSCRIPTIONS",
+			"item": [
+				{
+					"name": "See Subscribers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenBand}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/subscriptions/subscribers",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"subscriptions",
+								"subscribers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "See Subscriptions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenUser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/subscriptions/subscriptions",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"subscriptions",
+								"subscriptions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unsubscribe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenUser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/subscriptions/unsubscribe/682084dd531040a8645cc18b",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"subscriptions",
+								"unsubscribe",
+								"682084dd531040a8645cc18b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Subscribe",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenUser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/subscriptions/subscribe/682084dd531040a8645cc18b",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"subscriptions",
+								"subscribe",
+								"682084dd531040a8645cc18b"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Favorites",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenUser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/favorites",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"favorites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenUser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/favorites/679f6d318efb1498f7527b85",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"favorites",
+								"679f6d318efb1498f7527b85"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authTokenUser}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/favorites/679f6d318efb1498f7527b85",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"favorites",
+								"679f6d318efb1498f7527b85"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
