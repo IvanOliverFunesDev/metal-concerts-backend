@@ -208,6 +208,25 @@ Este proyecto está licenciado bajo la Licencia ISC.
  ┗ 📜index.js
  ```
 ## 📂 Coleccion Postman
+
+Este proyecto incluye una **colección de Postman** para probar la API de gestión de conciertos de metal, usuarios, bandas y más. A continuación, se describen las variables de entorno necesarias para utilizar correctamente la colección.
+
+### Variables de Entorno
+
+Antes de utilizar la colección de Postman, asegúrate de configurar las siguientes variables de entorno en Postman:
+
+- **`url`**: La URL base de la API.
+  - Ejemplo: `https://metal-concerts-backend.onrender.com`
+  
+- **`authTokenUser`**: Token de autenticación para usuarios.
+  - Ejemplo: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MWI3ZmFhMGI3NTVlN2FhMDU2MDlkNiIsInJvbGUiOiJ1c2VyIiwic3RhdHVzIjoiTi9BIiwiaWF0IjoxNzQ5MzIxOTYyLCJleHAiOjE3NDk0MDgzNjJ9...`
+
+- **`authTokenBand`**: Token de autenticación para bandas.
+  - Ejemplo: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MjA4NGRkNTMxMDQwYTg2NDVjYzE4YiIsInJvbGUiOiJiYW5kIiwic3RhdHVzIjoiYXBwcm92ZWQiLCJpYXQiOjE3NDkzMjE3OTgsImV4cCI6MTc0OTQwODE5OH0...`
+
+- **`authTokenAdmin`**: Token de autenticación para administradores.
+  - Ejemplo: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MWJhMjU4YTk4YzQwMTMxNWQ5NjE2NSIsInJvbGUiOiJhZG1pbiIsInN0YXR1cyI6Ik4vQSIsImlhdCI6MTc0OTMyMjcyNiwiZXhwIjoxNzQ5NDA5MTI2fQ...`
+
 {
 	"info": {
 		"_postman_id": "fd4e20b7-cda4-4d82-bc8c-fb2045d23c9f",
