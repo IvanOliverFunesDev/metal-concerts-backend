@@ -1716,3 +1716,432 @@ Antes de utilizar la colección de Postman, asegúrate de configurar las siguien
 		}
 	]
 }
+
+## 📂 YAML
+
+info:
+  contact:
+    email: ioliverfunes@gmail.com
+  description: API para la gestión de conciertos de metal, usuarios, bandas, suscripciones
+    y más.
+  title: Metal Concerts API
+  version: 1.0.0
+openapi: 3.0.0
+paths:
+  /admin/bands/pending:
+    get:
+      tags:
+        - admin
+      responses:
+        '200':
+          description: Lista de bandas pendientes obtenida correctamente
+        '500':
+          description: Error en el servidor
+      summary: Obtener bandas pendientes de aprobación
+  /admin/bands/{bandId}/approved:
+    patch:
+      tags:
+        - admin
+      parameters:
+      - in: path
+        name: bandId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Banda aprobada correctamente
+        '404':
+          description: Banda no encontrada
+      summary: Aprobar una banda
+  /admin/create-admin:
+    post:
+      tags:
+        - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  example: admin@example.com
+                  type: string
+                password:
+                  example: securepassword
+                  type: string
+                username:
+                  example: adminuser
+                  type: string
+              required:
+              - email
+              - username
+              - password
+              type: object
+        required: true
+      responses:
+        '201':
+          description: Administrador creado correctamente
+        '400':
+          description: Error en la solicitud
+      summary: Crear un administrador
+  /auth/login:
+    post:
+      tags:
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  example: user@example.com
+                  type: string
+                password:
+                  example: mypassword
+                  type: string
+              required:
+              - email
+              - password
+              type: object
+        required: true
+      responses:
+        '200':
+          description: Inicio de sesión exitoso
+        '401':
+          description: Credenciales incorrectas
+        '403':
+          description: Cuenta no validada por el administrador
+      summary: Iniciar sesión
+  /auth/logout:
+    post:
+      tags:
+        - auth
+      responses:
+        '200':
+          description: Sesión cerrada correctamente
+      summary: Cerrar sesión
+  /auth/register/band:
+    post:
+      tags:
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                bandName:
+                  example: Metallica
+                  type: string
+                description:
+                  example: Una banda de metal
+                  type: string
+                email:
+                  example: band@example.com
+                  type: string
+                genre:
+                  example: Heavy Metal
+                  type: string
+                password:
+                  example: mypassword
+                  type: string
+              required:
+              - email
+              - bandName
+              - password
+              - description
+              - genre
+              type: object
+        required: true
+      responses:
+        '201':
+          description: Banda registrada correctamente
+        '400':
+          description: Error en la solicitud
+      summary: Registrar una banda
+  /auth/register/user:
+    post:
+      tags:
+        - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  example: user@example.com
+                  type: string
+                password:
+                  example: mypassword
+                  type: string
+                username:
+                  example: user123
+                  type: string
+              required:
+              - username
+              - email
+              - password
+              type: object
+        required: true
+      responses:
+        '201':
+          description: Usuario registrado correctamente
+        '400':
+          description: Error en la solicitud
+      summary: Registrar un usuario
+  /bands:
+    get:
+      tags:
+        - bands
+      responses:
+        '200':
+          description: Lista de bandas obtenida correctamente
+        '500':
+          description: Error en el servidor
+      summary: Obtener lista de bandas registradas
+  /bands/update-profile:
+    put:
+      tags:
+        - bands
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                bandName:
+                  example: Metallica
+                  type: string
+                description:
+                  example: Banda icónica de metal
+                  type: string
+                genre:
+                  example: Heavy Metal
+                  type: string
+              required:
+              - bandName
+              - genre
+              - description
+              type: object
+        required: true
+      responses:
+        '200':
+          description: Perfil actualizado correctamente
+        '400':
+          description: Error en la solicitud
+      summary: Actualizar perfil de banda
+  /bands/{bandId}:
+    get:
+      tags:
+        - bands
+      parameters:
+      - in: path
+        name: bandId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Perfil de banda obtenido correctamente
+        '404':
+          description: Banda no encontrada
+      summary: Obtener perfil público de una banda
+  /concerts:
+    get:
+      tags:
+        - concerts
+      responses:
+        '200':
+          description: Lista de conciertos obtenida correctamente
+        '500':
+          description: Error en el servidor
+      summary: Obtener lista de conciertos
+    post:
+      tags:
+        - concerts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                date:
+                  example: '2026-01-01'
+                  type: string
+                title:
+                  example: Rock Fest
+                  type: string
+              required:
+              - title
+              - date
+              type: object
+        required: true
+      responses:
+        '201':
+          description: Concierto creado correctamente
+        '400':
+          description: Error en la solicitud
+      summary: Crear un nuevo concierto
+  /concerts/{id}:
+    delete:
+      tags:
+        - concerts
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Concierto eliminado correctamente
+        '404':
+          description: Concierto no encontrado
+      summary: Eliminar un concierto
+    put:
+      tags:
+        - concerts
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                date:
+                  example: '2026-02-01'
+                  type: string
+                title:
+                  example: Nuevo título
+                  type: string
+              required:
+              - title
+              - date
+              type: object
+        required: true
+      responses:
+        '200':
+          description: Concierto actualizado correctamente
+        '400':
+          description: Error en la solicitud
+      summary: Actualizar información de un concierto
+  /reviews/{concertId}:
+    delete:
+      tags:
+        - reviews
+      parameters:
+      - in: path
+        name: concertId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Reseña eliminada correctamente
+        '404':
+          description: Reseña no encontrada
+      summary: Eliminar una reseña
+    get:
+      tags:
+        - reviews
+      parameters:
+      - in: path
+        name: concertId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Lista de reseñas obtenida correctamente
+        '404':
+          description: Concierto no encontrado
+      summary: Obtener reseñas de un concierto
+    post:
+      tags:
+        - reviews
+      parameters:
+      - in: path
+        name: concertId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                comment:
+                  example: ¡Excelente concierto!
+                  type: string
+                rating:
+                  example: 5
+                  type: integer
+              required:
+              - rating
+              - comment
+              type: object
+        required: true
+      responses:
+        '201':
+          description: Reseña creada correctamente
+        '400':
+          description: Error en la solicitud
+      summary: Crear una reseña para un concierto
+  /subscriptions/subscribe/{bandId}:
+    post:
+      tags:
+        - subscriptions
+      parameters:
+      - in: path
+        name: bandId
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Suscripción realizada correctamente
+        '400':
+          description: Error en la solicitud
+      summary: Suscribirse a una banda
+  /subscriptions/subscribers:
+    get:
+      tags:
+        - subscriptions
+      responses:
+        '200':
+          description: Lista de suscriptores obtenida correctamente
+        '500':
+          description: Error en el servidor
+      summary: Obtener lista de suscriptores
+  /subscriptions/subscriptions:
+    get:
+      tags:
+        - subscriptions
+      responses:
+        '200':
+          description: Lista de suscripciones obtenida correctamente
+        '500':
+          description: Error en el servidor
+      summary: Obtener lista de suscripciones del usuario
+  /subscriptions/unsubscribe/{subscriptionId}:
+    delete:
+      tags:
+        - subscriptions
+      parameters:
+      - in: path
+        name: subscriptionId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Suscripción eliminada correctamente
+        '404':
+          description: Suscripción no encontrada
+      summary: Eliminar una suscripción
+servers:
+- description: Producción
+  url: https://metal-concerts-backend.onrender.com/api/v1
+- description: Desarrollo Local
+  url: http://localhost:3000/api/v1
